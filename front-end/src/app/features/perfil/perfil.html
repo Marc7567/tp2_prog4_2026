@@ -1,0 +1,74 @@
+<section class="profile-container">
+
+    <h1>Mi perfil</h1>
+    <p class="subtitle">Consulta y modifica tus datos personales.</p>
+
+    @if (cargando()) {
+    <p>Cargando perfil...</p>
+    } @else {
+
+    <section class="profile-card">
+
+        <div class="profile-picture">
+            @if (usuario()?.imagenPerfil) {
+            <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil">
+            } @else {
+            <div class="empty-avatar">
+                {{ nombre.charAt(0) || '?' }}
+            </div>
+            }
+        </div>
+
+        <form (ngSubmit)="guardarDatos()">
+
+            <div class="form-row">
+                <div>
+                    <label for="nombre">Nombre</label>
+                    <input id="nombre" name="nombre" type="text" [(ngModel)]="nombre" required>
+                </div>
+
+                <div>
+                    <label for="apellido">Apellido</label>
+                    <input id="apellido" name="apellido" type="text" [(ngModel)]="apellido" required>
+                </div>
+            </div>
+
+            <label for="username">Nombre de usuario</label>
+            <input id="username" name="username" type="text" [(ngModel)]="username" required>
+
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" [(ngModel)]="email" required>
+
+            <label for="fechaNacimiento">Fecha de nacimiento</label>
+            <input id="fechaNacimiento" name="fechaNacimiento" type="date" [(ngModel)]="fechaNacimiento" required>
+
+            <label for="descripcion">Descripcion</label>
+            <textarea id="descripcion" name="descripcion" [(ngModel)]="descripcion" maxlength="300" rows="4"></textarea>
+
+            <label for="imagenPerfil">Cambiar foto de perfil</label>
+            <input id="imagenPerfil" type="file" accept="image/jpeg,image/png,image/webp"
+                (change)="seleccionarImagen($event)">
+
+            <p class="role">
+                Rol: {{ usuario()?.rol }}
+            </p>
+
+            @if (error()) {
+            <p class="error">{{ error() }}</p>
+            }
+
+            @if (mensaje()) {
+            <p class="success">{{ mensaje() }}</p>
+            }
+
+            <button type="submit" [disabled]="guardando()">
+                {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+
+        </form>
+
+    </section>
+
+    }
+
+</section>

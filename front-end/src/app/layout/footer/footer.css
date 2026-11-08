@@ -1,0 +1,28 @@
+:host {
+    display: block;
+}
+
+.pie {
+    background: #f1f5f9;
+    border-top: 1px solid #e2e8f0;
+    color: #64748b;
+}
+
+.pie-contenido {
+    max-width: 1200px;
+    min-height: 68px;
+    margin: 0 auto;
+    padding: 18px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    box-sizing: border-box;
+    font-size: 0.9rem;
+}
+
+.pie-contenido span:first-child {
+    color: #334155;
+    font-weight: 700;
+}

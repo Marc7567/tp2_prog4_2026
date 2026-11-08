@@ -1,11 +1,12 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { UsuariosModule } from '../usuarios/usuarios.module';
-import { AutenticacionService } from './autenticacion.service';
-import { AutenticacionController } from './autenticacion.controller';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 
 @Module({
     imports: [
+        // Configura JWT con una clave secreta y una duracion de 24 horas.
         JwtModule.register({
             global: true,
             secret: process.env.JWT_SECRET,
@@ -15,8 +16,7 @@ import { AutenticacionController } from './autenticacion.controller';
         }),
         UsuariosModule
     ],
-    controllers: [AutenticacionController],
-    providers: [AutenticacionService]
+    controllers: [AuthController],
+    providers: [AuthService]
 })
-
-export class AutenticacionModule {}
+export class AuthModule {}

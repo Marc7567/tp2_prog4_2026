@@ -11,6 +11,7 @@ export class CrearPublicacionDto {
     @MaxLength(2000)
     mensaje!: string;
 
+    // imagen es opcional y puede recibirse como URL.
     @IsOptional()
     @IsString()
     imagen?: string;

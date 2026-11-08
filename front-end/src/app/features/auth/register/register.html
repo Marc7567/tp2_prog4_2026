@@ -1,0 +1,137 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Crear cuenta</h2>
+
+        <form [formGroup]="registroForm" (ngSubmit)="onSubmit()">
+            <div class="form-group">
+                <label for="nombre">Nombre</label>
+                <input id="nombre" type="text" formControlName="nombre" placeholder="Tu nombre">
+                @if (registroForm.controls.nombre.touched &&
+                registroForm.controls.nombre.invalid) {
+                <div class="error-msg">
+                    Ingresa tu nombre (minimo 2 caracteres).
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="apellido">Apellido</label>
+                <input id="apellido" type="text" formControlName="apellido" placeholder="Tu apellido">
+                @if (registroForm.controls.apellido.touched &&
+                registroForm.controls.apellido.invalid) {
+                <div class="error-msg">
+                    Ingresa tu apellido (minimo 2 caracteres).
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="username">Nombre de usuario</label>
+                <input id="username" type="text" formControlName="username" placeholder="Tu usuario">
+                @if (registroForm.controls.username.touched &&
+                registroForm.controls.username.invalid) {
+                <div class="error-msg">
+                    El usuario debe tener al menos 3 caracteres.
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="email">Correo electronico</label>
+                <input id="email" type="email" formControlName="email" placeholder="tu@email.com">
+                @if (registroForm.controls.email.touched &&
+                registroForm.controls.email.invalid) {
+                <div class="error-msg">
+                    Ingresa un correo electronico valido.
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="password">
+                    Contrasena
+                </label>
+                <input 
+                    id="password" 
+                    type="password" 
+                    formControlName="password" 
+                    placeholder="********"
+                    autocomplete="new-password"
+                >
+                @if (registroForm.controls.password.touched &&
+                registroForm.controls.password.invalid) {
+                <div class="error-msg">
+                    La contrasena debe tener al menos 8 caracteres, 
+                    una mayuscula y un numero.
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="repetirPassword">Repetir contrasena</label>
+                <input 
+                    id="repetirPassword" 
+                    type="password" 
+                    formControlName="repetirPassword"
+                    placeholder="Inngrese su contrasena de nuevo" 
+                    autocomplete="new-password"
+                >
+                @if (registroForm.controls.repetirPassword.touched &&
+                registroForm.controls.repetirPassword.invalid) {
+                <div class="error-msg">
+                    Repeti tu contrasena.
+                </div>
+                } @else if (registroForm.controls.repetirPassword.touched &&
+                !contrasenasCoinciden()) {
+                <div class="error-msg">
+                    Las contrasenas no coinciden.
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="fechaNacimiento">Fecha de nacimiento</label>
+                <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento">
+                @if (registroForm.controls.fechaNacimiento.touched &&
+                registroForm.controls.fechaNacimiento.invalid) {
+                <div class="error-msg">
+                    Ingresa tu fecha de nacimiento.
+                </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="descripcion">Descripcion breve</label>
+                <textarea id="descripcion" formControlName="descripcion" placeholder="Contanos algo sobre vos"
+                    rows="3"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="imagenPerfil">Imagen de perfil</label>
+                <input id="imagenPerfil" type="file" accept="image/*" (change)="seleccionarImagen($event)">
+                @if (nombreImagen()) {
+                <p class="file-name">{{ nombreImagen() }}</p>
+                }
+            </div>
+
+            @if (successMessage()) {
+            <div class="success-msg">{{ successMessage() }}</div>
+            }
+
+            @if (errorMessage()) {
+            <div class="error-msg">{{ errorMessage() }}</div>
+            }
+
+            <button type="submit" [disabled]="registroForm.invalid ||
+                    !contrasenasCoinciden() ||
+                    isLoading()">
+                {{ isLoading() ? 'Registrando...' : 'Registrarse' }}
+            </button>
+        </form>
+
+        <p class="auth-link">
+            ¿Ya tenes cuenta?
+            <a routerLink="/login">Inicia sesion aqui</a>
+        </p>
+    </div>
+</div>

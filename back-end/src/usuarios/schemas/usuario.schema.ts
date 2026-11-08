@@ -1,14 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import type { HydratedDocument } from 'mongoose';
 
+// Definimos los campos del usuario y 
+// agrega las fechas de creacion y actualizacion.
 @Schema({ timestamps: true })
 export class Usuario {
+    // required: true: campo obligatorio
+    // trim: true: elimina espacios en blanco al inicio y al final
+    // unique: true: valor unico en la base de datos
     @Prop({ required: true, trim: true })
     nombre!: string;
 
     @Prop({ required: true, trim: true })
     apellido!: string;
 
+    // 
     @Prop({
         required: true,
         unique: true,

@@ -4,13 +4,18 @@ import { compare } from 'bcryptjs';
 import { UsuariosService } from '../usuarios/usuarios.service';
 
 @Injectable()
-export class AutenticacionService {
+export class AuthService {
     constructor(
         private readonly usuariosService: UsuariosService,
         private readonly jwtService: JwtService
-    ) {}
+    ) { }
 
-    async login(email: string | undefined, username: string | undefined, password: string ) {
+    async login(
+        email: string | undefined,
+        username: string | undefined,
+        password: string
+    ) {
+        // Exige un unico identificador: email o username.
         if (Boolean(email) === Boolean(username)) {
             throw new BadRequestException('Debes enviar email o username');
         }
@@ -24,6 +29,7 @@ export class AutenticacionService {
             throw new UnauthorizedException('Credenciales incorrectas');
         }
 
+        // Compara la contrasena recibida con el hash almacenado.
         const passwordValida = await compare(
             password,
             usuario.password,
@@ -33,6 +39,7 @@ export class AutenticacionService {
             throw new UnauthorizedException('Credenciales incorrectas');
         }
 
+        // Datos que se guardan dentro del JWT.
         const payload = {
             sub: usuario._id.toString(),
             email: usuario.email,
@@ -43,6 +50,7 @@ export class AutenticacionService {
         const accessToken = await this.jwtService.signAsync(payload);
         const resultado = usuario.toObject();
 
+        // Devuelve el token y los datos publicos del usuario.
         return {
             access_token: accessToken,
             usuario: {

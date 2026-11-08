@@ -4,7 +4,7 @@ import { memoryStorage } from 'multer';
 import type { Express, Request } from 'express';
 import { PublicacionesService } from './publicaciones.service';
 import { CrearPublicacionDto } from './dto/crear-publicacion.dto';
-import { AuthGuard } from '../guards/auth/auth.guard';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service';
 import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor';
 

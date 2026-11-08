@@ -1,13 +1,15 @@
 import { Body, Controller, Post } from '@nestjs/common';
-import { AutenticacionService } from './autenticacion.service';
+import { AuthService } from './auth.service';
 import { LoginDto } from './dto/login.dto';
 
+// Definimos las rutas relacionadas con la autenticacion.
 @Controller()
-export class AutenticacionController {
+export class AuthController {
     constructor(
-        private readonly autenticacionService: AutenticacionService,
+        private readonly autenticacionService: AuthService,
     ) {}
 
+    // Recibe las credenciales y devuelve el token JWT junto con los datos del usuario.
     @Post('login')
     async login(@Body() datos: LoginDto) {
         return this.autenticacionService.login(
