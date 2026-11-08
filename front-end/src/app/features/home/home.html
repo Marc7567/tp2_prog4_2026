@@ -1,0 +1,99 @@
+<section class="home-container">
+    <div class="welcome">
+        <h1>Publicaciones</h1>
+        <p>Compartí algo con la comunidad.</p>
+    </div>
+
+    <!-- Crear Publicacion -->
+    <div class="create-card">
+        <h2>Crear una publicacion</h2>
+        <form (ngSubmit)="crearPublicacion()">
+            <label for="titulo">Titulo</label>
+            <input id="titulo" 
+                type="text" 
+                name="titulo" 
+                [(ngModel)]="titulo" 
+                maxlength="100"
+                placeholder="Escribi un titulo" required
+            >
+
+            <label for="texto">Mensaje</label>
+            <input id="texto" 
+                name="texto" 
+                [(ngModel)]="texto" 
+                maxlength="2000" 
+                rows="4"
+                placeholder="Que queres compartir?" 
+                required
+            >
+
+            <label for="imagen">Imagen (opcional)</label>
+            <input id="imagen" 
+                type="file" 
+                accept="image/jpeg,image/png,image/webp"
+                (change)="seleccionarImagen($event)"
+            >
+
+            @if (imagenSeleccionada()) {
+                <p class="file-name">
+                    Imagen seleccionada: {{ imagenSeleccionada()?.name }}
+                </p>
+            }
+
+            @if (error()) {
+                <p class="message error">{{ error() }}</p>
+            }
+
+            @if (mensaje()) {
+                <p class="message success">{{ mensaje() }}</p>
+            }
+
+            <button type="submit" [disabled]="publicando()">
+                {{ publicando() ? 'Publicando...' : 'Publicar' }}
+            </button>
+
+        </form>
+    </div>
+
+    <div class="feed">
+        <h2>Ultimas publicaciones</h2>
+
+        @if (cargando()) {
+            <p class="status">Cargando publicaciones...</p>
+        } @else if (publicaciones().length === 0) {
+            <p class="status">Todavia no hay publicaciones.</p>
+        } @else {
+
+            @for (publicacion of publicaciones(); track publicacion._id) {
+                <article class="publication-card">
+                    <div class="publication-author">
+                        @if (publicacion.autor?.imagenPerfil) {
+                            <img class="avatar" [src]="publicacion.autor.imagenPerfil" alt="Foto de perfil">
+                        } @else {
+                            <div class="avatar-placeholder">
+                                {{ publicacion.autor?.nombre?.charAt(0) || '?' }}
+                            </div>
+                        }
+
+                        <div>
+                            <strong>{{ publicacion.autor?.nombre }} {{ publicacion.autor?.apellido }}</strong>
+                            <span>@{{ publicacion.autor?.username }}</span>
+                        </div>
+                        <time>
+                            {{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}
+                        </time>
+                    </div>
+
+                    <h3>{{ publicacion.title }}</h3>
+                    <p class="publication-message">
+                        {{ publicacion.message }}
+                    </p>
+
+                    @if (publicacion.imagen) {
+                    <img class="publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion">
+                    }
+                </article>
+            }
+        }
+    </div>
+</section>

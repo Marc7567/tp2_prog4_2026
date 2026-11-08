@@ -1,4 +1,4 @@
-import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength} from 'class-validator';
+import { IsDateString, IsEmail, IsNotEmpty, IsString, Matches, MaxLength, MinLength } from 'class-validator';
 
 export class CrearUsuarioDto {
     @IsString()
@@ -11,6 +11,7 @@ export class CrearUsuarioDto {
     @MaxLength(50)
     apellido!: string;
 
+    // Admite letras, numeros y guion bajo, con un maximo de 30 caracteres.
     @IsString()
     @IsNotEmpty()
     @MaxLength(30)
@@ -23,6 +24,7 @@ export class CrearUsuarioDto {
     @IsNotEmpty()
     email!: string;
 
+    // Exige entre 8 y 72 caracteres, una mayuscula y un numero.
     @IsString()
     @MinLength(8)
     @MaxLength(72)

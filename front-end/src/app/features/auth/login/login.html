@@ -1,0 +1,61 @@
+<div class="auth-container">
+    <div class="auth-card">
+        <h2>Iniciar sesion</h2>
+
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+            <div class="form-group">
+                <label for="identificador">Ingrese su nombre de Usuario o correo electronico</label>
+                <input 
+                    id="identificador" 
+                    type="text" 
+                    formControlName="identificador" 
+                    placeholder="Usuario o email"
+                    autocomplete="username">
+
+                @if (loginForm.controls.identificador.touched &&
+                loginForm.controls.identificador.invalid) {
+                    <div class="error-msg">
+                        Ingresa tu nombre de usuario o correo electronico.
+                    </div>
+                }
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contrasena</label>
+                <input id="password" type="password" formControlName="password" placeholder="******"
+                    autocomplete="current-password">
+
+                @if (loginForm.controls.password.touched &&
+                loginForm.controls.password.hasError('required')) {
+                    <div class="error-msg">
+                        Ingresa tu contrasena.
+                    </div>
+                }
+
+                @if (loginForm.controls.password.touched &&
+                (loginForm.controls.password.hasError('minlength') ||
+                loginForm.controls.password.hasError('maxlength') ||
+                loginForm.controls.password.hasError('pattern'))) {
+                    <div class="error-msg">
+                        La contrasena debe tener entre 8 y 20 caracteres,
+                        al menos una mayuscula y un numero.
+                    </div>
+                }
+            </div>
+
+            @if (errorMessage()) {
+            <div class="error-msg">{{ errorMessage() }}</div>
+            }
+
+            <button type="submit" [disabled]="loginForm.invalid || isLoading()">
+                {{ isLoading() ? 'Ingresando...' : 'Entrar' }}
+            </button>
+        </form>
+
+        <p class="auth-link">
+            ¿No tienes cuenta?
+            <a routerLink="/register">Registrate aqui</a>
+        </p>
+    </div>
+</div>

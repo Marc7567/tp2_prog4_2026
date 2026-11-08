@@ -8,14 +8,16 @@ import { CrearUsuarioDto } from './dto/crear-usuario.dto';
 @Injectable()
 export class UsuariosService {
     constructor(
-    @InjectModel(Usuario.name) 
-    private readonly modelo: Model<Usuario>
+        @InjectModel(Usuario.name)
+        private readonly modelo: Model<Usuario>
     ) {}
 
+    // Busca un usuario por su email.
     async buscarPorEmail(email: string) {
         return this.modelo.findOne({ email }).exec();
     }
 
+    // Busca por email o username e incluye la contrasena para verificar el login.
     async buscarParaLogin(email?: string, username?: string) {
         const filtro = email
             ? { email }
@@ -27,7 +29,12 @@ export class UsuariosService {
             .exec();
     }
 
-    async crear(datos: CrearUsuarioDto, imagenPerfil = '', imagenPerfilPublicId = '') {
+    // Valida duplicados, cifra la contrasena y crea el usuario.
+    async crear(
+        datos: CrearUsuarioDto,
+        imagenPerfil = '',
+        imagenPerfilPublicId = ''
+    ) {
         const email = datos.email.trim().toLowerCase();
         const username = datos.username.trim().toLowerCase();
 
@@ -40,13 +47,17 @@ export class UsuariosService {
 
         if (usuarioExistente) {
             if (usuarioExistente.email === email) {
-                throw new ConflictException('Ya existe un usuario con ese email');
+                throw new ConflictException(
+                    'Ya existe un usuario con ese email'
+                );
             }
 
             throw new ConflictException(
-                'Ya existe un usuario con ese nombre de usuario');
+                'Ya existe un usuario con ese nombre de usuario'
+            );
         }
 
+        // Genera un hash de la contrasena con un factor de costo de 10.
         const passwordCifrada = await hash(datos.password, 10);
 
         const usuario = await this.modelo.create({
@@ -61,6 +72,7 @@ export class UsuariosService {
             descripcion: datos.descripcion?.trim() ?? ''
         });
 
+        // Devuelve los datos publicos sin exponer la contrasena ni el ID de Cloudinary.
         const resultado = usuario.toObject();
 
         return {

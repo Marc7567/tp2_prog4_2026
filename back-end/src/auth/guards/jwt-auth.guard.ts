@@ -9,6 +9,7 @@ export class AuthGuard implements CanActivate {
         const request = context.switchToHttp().getRequest();
         const authorization = request.headers.authorization;
 
+        // Comprueba que se haya enviado un token Bearer.
         if (!authorization?.startsWith('Bearer ')) {
             throw new UnauthorizedException('Token no proporcionado');
         }
@@ -16,6 +17,7 @@ export class AuthGuard implements CanActivate {
         const token = authorization.slice(7);
 
         try {
+            // Valida el token y guarda su contenido en request.user.
             request.user = await this.jwtService.verifyAsync(token);
             return true;
         } catch {

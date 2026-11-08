@@ -14,6 +14,7 @@ export class UsuariosController {
         private readonly imagenesService: ImagenesService
     ) {}
 
+    // Registra al usuario y procesa opcionalmente su imagen de perfil.
     @Post('registro')
     @UseInterceptors(
         ImagenesInterceptor,
@@ -29,31 +30,28 @@ export class UsuariosController {
             },
         }),
     )
-
-    async crear(@Body() datos: CrearUsuarioDto, @UploadedFile() archivo?: Express.Multer.File) {
-        // Se permite registrar un usuario sin imagen.
+    async crear(
+        @Body() datos: CrearUsuarioDto,
+        @UploadedFile() archivo?: Express.Multer.File
+    ) {
         if (!archivo) {
             return this.usuariosService.crear(datos);
         }
 
-        // Validar y convertir la imagen.
         const buffer = await this.imagenesService.normalizar(archivo);
-
-        // Subir a Cloudinary.
         const subida = await this.imagenesService.subir(
             buffer,
             'red-social/perfiles'
         );
 
         try {
-            // Guardar URL e identificador en MongoDB.
             return await this.usuariosService.crear(
                 datos,
                 subida.url,
                 subida.publicId
             );
         } catch (error) {
-            // Si falla MongoDB, intentara limpiar Cloudinary.
+            // Limpia la imagen si falla el registro en MongoDB.
             await this.imagenesService.eliminar(subida.publicId);
             throw error;
         }
