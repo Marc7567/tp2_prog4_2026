@@ -20,7 +20,7 @@ export class Login {
     identificador: ['', [Validators.required]],
     password: ['', [Validators.required,
     Validators.minLength(8),
-    Validators.maxLength(20),
+    Validators.maxLength(72),
     Validators.pattern(/^(?=.*[A-Z])(?=.*\d).+$/),
     ]]
   });

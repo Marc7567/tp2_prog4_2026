@@ -74,6 +74,10 @@ export class Home implements OnInit {
   }
 
   crearPublicacion(): void {
+    if (this.publicando()) {
+      return;
+    }
+
     const titulo = this.titulo.trim();
     const texto = this.texto.trim();
 

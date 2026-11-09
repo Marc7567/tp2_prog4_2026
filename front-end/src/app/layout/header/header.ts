@@ -18,7 +18,3 @@ export class Header {
     void this.router.navigate(['/login']);
   }
 }
-
-// localStorage.removeItem('access_token');
-// localStorage.removeItem('usuario');
-// location.reload();

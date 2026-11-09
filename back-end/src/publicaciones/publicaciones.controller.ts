@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Express, Request } from 'express';
@@ -7,22 +7,23 @@ import { CrearPublicacionDto } from './dto/crear-publicacion.dto';
 import { AuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service';
 import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor';
+import { JwtService } from '@nestjs/jwt';
+import { Types } from 'mongoose';
 
 interface RequestAutenticado extends Request {
-    user: {
-        sub: string;
-    };
+    user: { sub: string };
 }
 
 @Controller('publicaciones')
-@UseGuards(AuthGuard)
 export class PublicacionesController {
     constructor(
         private readonly publicacionesService: PublicacionesService,
         private readonly imagenesService: ImagenesService,
-    ) {}
+        private readonly jwtService: JwtService
+    ) { }
 
     @Post()
+    @UseGuards(AuthGuard)
     @UseInterceptors(
         ImagenesInterceptor,
         FileInterceptor('imagen', {
@@ -33,45 +34,31 @@ export class PublicacionesController {
                 fields: 3,
                 parts: 4,
                 fieldSize: 4096,
-                fieldNameSize: 100,
-            },
-        }),
+                fieldNameSize: 100
+            }
+        })
     )
     async crear(
         @Body() datos: CrearPublicacionDto,
         @Req() request: RequestAutenticado,
-        @UploadedFile() archivo?: Express.Multer.File,
+        @UploadedFile() archivo?: Express.Multer.File
     ) {
-        // Si no hay archivo, se conserva el funcionamiento JSON anterior.
         if (!archivo) {
-            return this.publicacionesService.crear(
-                datos,
-                request.user.sub,
-            );
+            return this.publicacionesService.crear(datos, request.user.sub);
         }
 
-        // No aceptar una URL y un archivo al mismo tiempo.
         if (datos.imagen?.trim()) {
-            throw new BadRequestException(
-                'Envía la imagen como archivo o como URL, no ambas',
-            );
+            throw new BadRequestException('Envía la imagen como archivo o como URL');
         }
 
         const buffer = await this.imagenesService.normalizar(archivo);
-
-        const subida = await this.imagenesService.subir(
-            buffer,
-            'red-social/publicaciones',
-        );
+        const subida = await this.imagenesService.subir(buffer, 'red-social/publicaciones');
 
         try {
             return await this.publicacionesService.crear(
-                {
-                    ...datos,
-                    imagen: subida.url,
-                },
+                { ...datos, imagen: subida.url },
                 request.user.sub,
-                subida.publicId,
+                subida.publicId
             );
         } catch (error) {
             await this.imagenesService.eliminar(subida.publicId);
@@ -80,7 +67,55 @@ export class PublicacionesController {
     }
 
     @Get()
-    listar() {
-        return this.publicacionesService.listar();
+    async listar(
+        @Req() request: Request,
+        @Query('orden') orden = 'fecha',
+        @Query('usuarioId') usuarioId?: string,
+        @Query('offset') offsetTexto = '0',
+        @Query('limit') limitTexto = '10',
+    ) {
+        let usuarioActualId = '000000000000000000000000';
+        const authorization = request.headers.authorization;
+
+        if (authorization?.startsWith('Bearer ')) {
+            try {
+                const payload = await this.jwtService.verifyAsync(
+                    authorization.slice(7),
+                );
+
+                if (typeof payload.sub === 'string' &&
+                    Types.ObjectId.isValid(payload.sub)) {
+                    usuarioActualId = payload.sub;
+                }
+            } catch {
+                // El listado sigue siendo publico aunque el token no sea valido.
+            }
+        }
+
+        return this.publicacionesService.listar(
+            usuarioActualId,
+            orden,
+            usuarioId,
+            Number(offsetTexto),
+            Number(limitTexto),
+        );
+    }
+
+    @Delete(':id')
+    @UseGuards(AuthGuard)
+    eliminar(@Param('id') id: string, @Req() request: RequestAutenticado) {
+        return this.publicacionesService.eliminar(id, request.user.sub);
+    }
+
+    @Post(':id/me-gusta')
+    @UseGuards(AuthGuard)
+    darMeGusta(@Param('id') id: string, @Req() request: RequestAutenticado) {
+        return this.publicacionesService.darMeGusta(id, request.user.sub);
+    }
+
+    @Delete(':id/me-gusta')
+    @UseGuards(AuthGuard)
+    quitarMeGusta(@Param('id') id: string, @Req() request: RequestAutenticado) {
+        return this.publicacionesService.quitarMeGusta(id, request.user.sub);
     }
 }
