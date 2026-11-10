@@ -24,7 +24,7 @@ export class Home implements OnInit {
   orden = 'fecha';
   pagina = signal(0);
   total = signal(0);
-  limite = 10;
+  limite = 5;
 
   titulo = '';
   texto = '';

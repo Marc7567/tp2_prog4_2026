@@ -14,7 +14,7 @@ export class PublicacionesService {
     listar(
         orden = 'fecha',
         offset = 0,
-        limit = 10,
+        limit = 5,
         usuarioId?: string,
     ) {
         let params = new HttpParams()
