@@ -47,7 +47,7 @@ export class PublicacionesService {
         orden = 'fecha',
         usuarioId?: string,
         offset = 0,
-        limit = 10
+        limit = 5
     ) {
         if (!['fecha', 'meGusta'].includes(orden)) {
             throw new BadRequestException('El orden debe ser por fecha o por Me Gustas');
@@ -58,9 +58,9 @@ export class PublicacionesService {
             throw new BadRequestException('Debe ser un numero mayor o igual a 0');
         }
 
-        if (!Number.isInteger(limit) || limit < 1 || limit > 50) {
+        if (!Number.isInteger(limit) || limit < 1 || limit > 5) {
             // limit
-            throw new BadRequestException('Debe ser un numero entre 1 y 50');
+            throw new BadRequestException('Debe ser un numero entre 1 y 5');
         }
 
         if (usuarioId && !Types.ObjectId.isValid(usuarioId)) {
@@ -123,7 +123,7 @@ export class PublicacionesService {
                     }
                 ])
                 .exec(),
-            this.modelo.countDocuments(filtro).exec(),
+            this.modelo.countDocuments(filtro).exec()
         ]);
 
         return { items: publicaciones, total, offset, limit };

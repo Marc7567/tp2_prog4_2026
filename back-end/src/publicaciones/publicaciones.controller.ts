@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 
 interface RequestAutenticado extends Request {
     user: { sub: string };
-}
+} 
 
 @Controller('publicaciones')
 export class PublicacionesController {
@@ -72,7 +72,7 @@ export class PublicacionesController {
         @Query('orden') orden = 'fecha',
         @Query('usuarioId') usuarioId?: string,
         @Query('offset') offsetTexto = '0',
-        @Query('limit') limitTexto = '10',
+        @Query('limit') limitTexto = '5',
     ) {
         let usuarioActualId = '000000000000000000000000';
         const authorization = request.headers.authorization;

@@ -1,123 +1,108 @@
 <section class="home-container">
-    <div class="welcome">
-        <h1>Publicaciones</h1>
-        <p>Compartí algo con la comunidad.</p>
+  <div class="welcome">
+    <h1>Publicaciones</h1>
+    <p>Compartí algo con la comunidad.</p>
+  </div>
+
+  <div class="create-card">
+    <h2>Crear una publicacion</h2>
+
+    <form (ngSubmit)="crearPublicacion()">
+      <label for="titulo">Titulo</label>
+      <input
+        id="titulo"
+        type="text"
+        name="titulo"
+        [(ngModel)]="titulo"
+        maxlength="100"
+        placeholder="Escribi un titulo"
+        required
+      />
+
+      <label for="texto">Mensaje</label>
+      <textarea
+        id="texto"
+        name="texto"
+        [(ngModel)]="texto"
+        maxlength="2000"
+        rows="4"
+        placeholder="Que queres compartir?"
+        required
+      ></textarea>
+
+      <label for="imagen">Imagen (opcional)</label>
+      <input
+        id="imagen"
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        (change)="seleccionarImagen($event)"
+      />
+
+      @if (imagenSeleccionada()) {
+        <p class="file-name">Imagen seleccionada: {{ imagenSeleccionada()?.name }}</p>
+      }
+
+      @if (error()) {
+        <p class="message error">{{ error() }}</p>
+      }
+
+      @if (mensaje()) {
+        <p class="message success">{{ mensaje() }}</p>
+      }
+
+      <button type="submit" [disabled]="publicando()">
+        {{ publicando() ? 'Publicando...' : 'Publicar' }}
+      </button>
+    </form>
+  </div>
+
+  <div class="feed">
+    <div class="feed-header">
+      <h2>Ultimas publicaciones</h2>
+
+      <label for="orden">Ordenar por</label>
+      <select
+        id="orden"
+        [ngModel]="orden"
+        (ngModelChange)="cambiarOrden($event)"
+        [ngModelOptions]="{ standalone: true }"
+      >
+        <option value="fecha">Mas recientes</option>
+        <option value="meGusta">Mas me gusta</option>
+      </select>
     </div>
 
-    <div class="create-card">
-        <h2>Crear una publicacion</h2>
+    @if (cargando()) {
+      <p class="status">Cargando publicaciones...</p>
+    } @else if (publicaciones().length === 0) {
+      <p class="status">Todavia no hay publicaciones.</p>
+    } @else {
+      @for (publicacion of publicaciones(); track publicacion._id) {
+        <app-publicacion-detail
+          [publicacion]="publicacion"
+          [accionEnCurso]="accionEnCurso() === publicacion._id"
+          (meGusta)="alternarMeGusta($event)"
+          (eliminar)="eliminarPublicacion($event)"
+        />
+      }
+    }
 
-        <form (ngSubmit)="crearPublicacion()">
-            <label for="titulo">Titulo</label>
-            <input id="titulo" type="text" name="titulo" [(ngModel)]="titulo" maxlength="100"
-                placeholder="Escribi un titulo" required>
+    @if (total() > 0) {
+      <div class="pagination">
+        <button type="button" (click)="cambiarPagina(-1)" [disabled]="pagina() === 0 || cargando()">
+          Anterior
+        </button>
 
-            <label for="texto">Mensaje</label>
-            <textarea id="texto" name="texto" [(ngModel)]="texto" maxlength="2000" rows="4"
-                placeholder="Que queres compartir?" required></textarea>
+        <span> Pagina {{ pagina() + 1 }} de {{ totalPaginas }} </span>
 
-            <label for="imagen">Imagen (opcional)</label>
-            <input id="imagen" type="file" accept="image/jpeg,image/png,image/webp"
-                (change)="seleccionarImagen($event)">
-
-            @if (imagenSeleccionada()) {
-            <p class="file-name">
-                Imagen seleccionada: {{ imagenSeleccionada()?.name }}
-            </p>
-            }
-
-            @if (error()) {
-            <p class="message error">{{ error() }}</p>
-            }
-
-            @if (mensaje()) {
-            <p class="message success">{{ mensaje() }}</p>
-            }
-
-            <button type="submit" [disabled]="publicando()">
-                {{ publicando() ? 'Publicando...' : 'Publicar' }}
-            </button>
-        </form>
-    </div>
-
-    <div class="feed">
-        <div class="feed-header">
-            <h2>Ultimas publicaciones</h2>
-
-            <label for="orden">Ordenar por</label>
-            <select id="orden" [ngModel]="orden" (ngModelChange)="cambiarOrden($event)"
-                [ngModelOptions]="{ standalone: true }">
-                <option value="fecha">Mas recientes</option>
-                <option value="meGusta">Mas me gusta</option>
-            </select>
-        </div>
-
-        @if (cargando()) {
-        <p class="status">Cargando publicaciones...</p>
-        } @else if (publicaciones().length === 0) {
-        <p class="status">Todavia no hay publicaciones.</p>
-        } @else {
-        @for (publicacion of publicaciones(); track publicacion._id) {
-        <article class="publication-card">
-            <div class="publication-author">
-                @if (publicacion.autor?.imagenPerfil) {
-                <img class="avatar" [src]="publicacion.autor.imagenPerfil" alt="Foto de perfil">
-                } @else {
-                <div class="avatar-placeholder">
-                    {{ publicacion.autor?.nombre?.charAt(0) || '?' }}
-                </div>
-                }
-
-                <div>
-                    <strong>
-                        {{ publicacion.autor?.nombre }}
-                        {{ publicacion.autor?.apellido }}
-                    </strong>
-                    <span>@{{ publicacion.autor?.username }}</span>
-                </div>
-
-                <time>
-                    {{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}
-                </time>
-            </div>
-
-            <h3>{{ publicacion.titulo }}</h3>
-            <p class="publication-message">{{ publicacion.mensaje }}</p>
-
-            @if (publicacion.imagen) {
-            <img class="publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion">
-            }
-
-            <div class="publication-actions">
-                <button type="button" (click)="alternarMeGusta(publicacion)"
-                    [disabled]="accionEnCurso() === publicacion._id">
-                    {{ publicacion.meGustaUsuario ? 'Quitar me gusta' : 'Me gusta' }}
-                    ({{ publicacion.cantidadMeGusta }})
-                </button>
-
-                <button type="button" class="delete-button" (click)="eliminarPublicacion(publicacion)"
-                    [disabled]="accionEnCurso() === publicacion._id">
-                    Eliminar
-                </button>
-            </div>
-        </article>
-        }
-        }
-
-        @if (total() > 0) {
-        <div class="pagination">
-            <button type="button" (click)="cambiarPagina(-1)" [disabled]="pagina() === 0 || cargando()">
-                Anterior
-            </button>
-
-            <span>
-                Pagina {{ pagina() + 1 }} de {{ totalPaginas }}
-            </span>
-
-            <button type="button" (click)="cambiarPagina(1)" [disabled]="pagina() + 1 >= totalPaginas || cargando()">
-                Siguiente
-            </button>
-        </div>
-        }
-    </div>
+        <button
+          type="button"
+          (click)="cambiarPagina(1)"
+          [disabled]="pagina() + 1 >= totalPaginas || cargando()"
+        >
+          Siguiente
+        </button>
+      </div>
+    }
+  </div>
 </section>

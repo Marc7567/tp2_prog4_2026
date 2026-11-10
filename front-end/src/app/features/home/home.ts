@@ -3,15 +3,15 @@ import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { Publicacion } from '../../core/models/publicacion.interface';
+import { PublicacionDetail } from '../publicacion-detail/publicacion-detail';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, DatePipe],
+  imports: [FormsModule, DatePipe, PublicacionDetail],
   templateUrl: './home.html',
-  styleUrl: './home.css'
+  styleUrl: './home.css',
 })
-
 export class Home implements OnInit {
   private publicacionesService = inject(PublicacionesService);
 
@@ -24,7 +24,7 @@ export class Home implements OnInit {
   orden = 'fecha';
   pagina = signal(0);
   total = signal(0);
-  limite = 10;
+  limite = 5;
 
   titulo = '';
   texto = '';
@@ -39,26 +39,24 @@ export class Home implements OnInit {
     this.cargando.set(true);
     this.error.set('');
 
-    this.publicacionesService.listar(
-      this.orden,
-      this.pagina() * this.limite,
-      this.limite,
-    ).subscribe({
-      next: (respuesta) => {
-        this.publicaciones.set(respuesta.items);
-        this.total.set(respuesta.total);
-        this.cargando.set(false);
-      },
-      error: (error) => {
-        const detalle = error?.error?.message;
-        this.error.set(
-          Array.isArray(detalle)
-            ? detalle.join(', ')
-            : detalle || 'No se pudieron cargar las publicaciones',
-        );
-        this.cargando.set(false);
-      },
-    });
+    this.publicacionesService
+      .listar(this.orden, this.pagina() * this.limite, this.limite)
+      .subscribe({
+        next: (respuesta) => {
+          this.publicaciones.set(respuesta.items);
+          this.total.set(respuesta.total);
+          this.cargando.set(false);
+        },
+        error: (error) => {
+          const detalle = error?.error?.message;
+          this.error.set(
+            Array.isArray(detalle)
+              ? detalle.join(', ')
+              : detalle || 'No se pudieron cargar las publicaciones',
+          );
+          this.cargando.set(false);
+        },
+      });
   }
 
   cambiarOrden(orden: string): void {
@@ -168,19 +166,17 @@ export class Home implements OnInit {
           lista.map((item) =>
             item._id === publicacion._id
               ? {
-                ...item,
-                cantidadMeGusta: respuesta.cantidadMeGusta,
-                meGustaUsuario: respuesta.meGustaUsuario,
-              }
+                  ...item,
+                  cantidadMeGusta: respuesta.cantidadMeGusta,
+                  meGustaUsuario: respuesta.meGustaUsuario,
+                }
               : item,
           ),
         );
         this.accionEnCurso.set('');
       },
       error: (error) => {
-        this.error.set(
-          error?.error?.message || 'No se pudo actualizar el me gusta',
-        );
+        this.error.set(error?.error?.message || 'No se pudo actualizar el me gusta');
         this.accionEnCurso.set('');
       },
     });
@@ -189,9 +185,8 @@ export class Home implements OnInit {
   eliminarPublicacion(publicacion: Publicacion): void {
     if (this.accionEnCurso()) return;
 
-    const confirmar = confirm(
-      `Estas seguro de que queres eliminar "${publicacion.titulo}"?`,
-    );
+    // corregir el mensaje de confirmacion para que sea mas claro que se esta eliminando la publicacion
+    const confirmar = confirm(`Estas seguro de que queres eliminar "${publicacion.titulo}"?`);
 
     if (!confirmar) return;
 
@@ -210,9 +205,7 @@ export class Home implements OnInit {
         this.cargarPublicaciones();
       },
       error: (error) => {
-        this.error.set(
-          error?.error?.message || 'No se pudo eliminar la publicacion',
-        );
+        this.error.set(error?.error?.message || 'No se pudo eliminar la publicacion');
         this.accionEnCurso.set('');
       },
     });
