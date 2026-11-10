@@ -34,7 +34,6 @@
     background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* routerLinkActive agrega esta clase a la ruta activa */
 .nav-links a.active {
     color: white;
     background-color: #3498db;

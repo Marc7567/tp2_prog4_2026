@@ -27,10 +27,21 @@ export class Publicacion {
     })
     autor!: Types.ObjectId;
 
+    // Indica si la publicacion fue eliminada logicamente.
+    @Prop({ default: false, index: true })
+    eliminada!: boolean;
+
+    // Usuarios que dieron me gusta a la publicacion.
+    @Prop({
+        type: [{ type: MongooseSchema.Types.ObjectId, ref: 'Usuario' }],
+        default: [],
+    })
+    meGusta!: Types.ObjectId[];
+
     createdAt!: Date;
     updatedAt!: Date;
 }
 
-// Tipos y esquema que utiliza Mongoose.
+// Tipo y esquema que utiliza Mongoose.
 export type PublicacionDocument = HydratedDocument<Publicacion>;
 export const PublicacionSchema = SchemaFactory.createForClass(Publicacion);

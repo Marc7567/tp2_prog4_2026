@@ -26,4 +26,4 @@ import { AuthGuard } from '../auth/guards/jwt-auth.guard';
     // Permite que otros modulos utilicen UsuariosService.
     exports: [UsuariosService]
 })
-export class UsuariosModule { }
+export class UsuariosModule {}
