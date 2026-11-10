@@ -1,0 +1,44 @@
+<article class="publication-card">
+    <div class="publication-author">
+        @if (publicacion.autor?.imagenPerfil) {
+        <img class="avatar" [src]="publicacion.autor.imagenPerfil" alt="Foto de perfil">
+        } @else {
+        <div class="avatar-placeholder">
+            {{ inicialAutor() }}
+        </div>
+        }
+
+        <div class="author-info">
+            <strong>
+                {{ publicacion.autor?.nombre }}
+                {{ publicacion.autor?.apellido }}
+            </strong>
+            <span>@{{ publicacion.autor?.username }}</span>
+        </div>
+
+        <time>
+            {{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}
+        </time>
+    </div>
+
+    <h3>{{ publicacion.titulo }}</h3>
+
+    <p class="publication-message">{{ publicacion.mensaje }}</p>
+
+    @if (publicacion.imagen) {
+    <img class="publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion">
+    }
+
+    <div class="publication-actions">
+        <button type="button" (click)="meGusta.emit(publicacion)" [disabled]="accionEnCurso">
+            {{ publicacion.meGustaUsuario ? 'Quitar me gusta' : 'Me gusta' }}
+            ({{ publicacion.cantidadMeGusta }})
+        </button>
+
+        @if (puedeEliminar()) {
+        <button type="button" class="delete-button" (click)="eliminar.emit(publicacion)" [disabled]="accionEnCurso">
+            Eliminar
+        </button>
+        }
+    </div>
+</article>
