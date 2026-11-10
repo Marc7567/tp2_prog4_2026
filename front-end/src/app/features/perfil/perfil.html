@@ -3,23 +3,20 @@
     <p class="subtitle">Consulta y modifica tus datos personales.</p>
 
     @if (cargando()) {
-    <p>Cargando perfil...</p>
+        <p>Cargando perfil...</p>
     } @else {
-
-    <section class="profile-card">
-
+    <section class="my-publication-details">
         <div class="profile-picture">
             @if (usuario()?.imagenPerfil) {
-            <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil">
+                <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil" />
             } @else {
-            <div class="empty-avatar">
-                {{ nombre.charAt(0) || '?' }}
-            </div>
+                <div class="empty-avatar">
+                    {{ nombre.charAt(0) || '?' }}
+                </div>
             }
         </div>
 
         <form (ngSubmit)="guardarDatos()">
-
             <div class="form-row">
                 <div>
                     <label for="nombre">Nombre</label>
@@ -28,8 +25,8 @@
                         name="nombre" 
                         type="text" 
                         [(ngModel)]="nombre" 
-                        required
-                    >
+                        required 
+                    />
                 </div>
 
                 <div>
@@ -39,27 +36,28 @@
                         name="apellido" 
                         type="text" 
                         [(ngModel)]="apellido" 
-                        required
-                    >
+                        required 
+                    />
                 </div>
             </div>
 
             <label for="username">Nombre de usuario</label>
             <input 
                 id="username" 
-                name="username"
+                name="username" 
                 type="text" 
                 [(ngModel)]="username" 
-                required
-            >
+                required 
+            />
 
             <label for="email">Email</label>
             <input 
                 id="email" 
                 name="email" 
                 type="email" 
-                [(ngModel)]="email" required
-            >
+                [(ngModel)]="email" 
+                required 
+            />
 
             <label for="fechaNacimiento">Fecha de nacimiento</label>
             <input 
@@ -67,8 +65,8 @@
                 name="fechaNacimiento" 
                 type="date" 
                 [(ngModel)]="fechaNacimiento" 
-                required
-            >
+                required 
+            />
 
             <label for="descripcion">Descripcion</label>
             <textarea 
@@ -76,16 +74,17 @@
                 name="descripcion" 
                 [(ngModel)]="descripcion" 
                 maxlength="300" 
-                rows="4">
-            </textarea>
+                rows="4"
+            ></textarea>
 
             <label for="imagenPerfil">Cambiar foto de perfil</label>
             <input 
                 id="imagenPerfil" 
+                name="imagenPerfil" 
                 type="file" 
                 accept="image/jpeg,image/png,image/webp"
-                (change)="seleccionarImagen($event)"
-            >
+                (change)="seleccionarImagen($event)" 
+            />
 
             <p class="role">Rol: {{ usuario()?.rol }}</p>
 
@@ -101,6 +100,37 @@
                 {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
             </button>
         </form>
+    </section>
+
+    <section class="my-publications">
+        <h2>Mis ultimas publicaciones</h2>
+        <p class="subtitle">Estas son tus tres publicaciones mas recientes.</p>
+
+        @if (cargandoPublicaciones()) {
+            <p>Cargando tus publicaciones...</p>
+        } @else if (errorPublicaciones()) {
+            <p class="error">{{ errorPublicaciones() }}</p>
+        } @else if (misPublicaciones().length === 0) {
+            <p>Todavia no creaste ninguna publicacion.</p>
+        } @else {
+            @for (publicacion of misPublicaciones(); track publicacion._id) {
+                <article class="my-publication-details">
+                    <div class="my-publication-header">
+                        <time> {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+                        <span> {{ publicacion.cantidadMeGusta }} me gusta </span>
+                    </div>
+
+                    <h3>{{ publicacion.titulo }}</h3>
+                    <p class="my-publication-message">
+                        {{ publicacion.mensaje }}
+                    </p>
+
+                    @if (publicacion.imagen) {
+                        <img class="my-publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion" />
+                    }
+                </article>
+            }
+        }
     </section>
     }
 </section>
