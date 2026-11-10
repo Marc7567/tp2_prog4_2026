@@ -123,7 +123,7 @@ export class PublicacionesService {
                     }
                 ])
                 .exec(),
-            this.modelo.countDocuments(filtro).exec(),
+            this.modelo.countDocuments(filtro).exec()
         ]);
 
         return { items: publicaciones, total, offset, limit };

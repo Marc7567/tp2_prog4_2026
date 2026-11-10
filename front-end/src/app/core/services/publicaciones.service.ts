@@ -5,7 +5,7 @@ import {Publicacion, RespuestaPublicaciones } from '../models/publicacion.interf
 
 @Injectable({
     providedIn: 'root',
-})
+})   
 
 export class PublicacionesService {
     private http = inject(HttpClient);

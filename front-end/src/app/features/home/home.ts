@@ -10,7 +10,7 @@ import { Publicacion } from '../../core/models/publicacion.interface';
   imports: [FormsModule, DatePipe],
   templateUrl: './home.html',
   styleUrl: './home.css'
-})
+})  
 
 export class Home implements OnInit {
   private publicacionesService = inject(PublicacionesService);

@@ -12,7 +12,7 @@ import { Types } from 'mongoose';
 
 interface RequestAutenticado extends Request {
     user: { sub: string };
-}
+} 
 
 @Controller('publicaciones')
 export class PublicacionesController {
