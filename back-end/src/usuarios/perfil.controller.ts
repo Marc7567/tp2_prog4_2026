@@ -18,7 +18,7 @@ export class PerfilController {
     constructor(
         private readonly perfilService: PerfilService,
         private readonly imagenesService: ImagenesService,
-    ) { }
+    ) {}
 
     @Get()
     obtener(@Req() request: RequestAutenticado) {

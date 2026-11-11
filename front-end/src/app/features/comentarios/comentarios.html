@@ -1,0 +1,45 @@
+<section class="comments-section">
+    <h4>Comentarios ({{ comentarios.length }})</h4>
+
+    @if (cargando) {
+        <p>Cargando comentarios...</p>
+    } @else if (error) {
+        <p class="comment-error">{{ error }}</p>
+
+        <button type="button" (click)="cargarComentarios()">Reintentar</button>
+    } @else if (comentarios.length === 0) {
+            <p class="empty-comments">Todavia no hay comentarios.</p>
+    } @else {
+        <div class="comments-list">
+            @for (comentario of comentarios; track comentario._id) {
+                <article class="comment-card">
+                    <div class="comment-header">
+                        <div class="comment-author">
+                            @if (comentario.autor?.imagenPerfil) {
+                                <img class="comment-avatar" [src]="comentario.autor.imagenPerfil" alt="Foto de perfil" />
+                            } @else {
+                                <div class="comment-avatar-placeholder">
+                                    {{ comentario.autor?.nombre?.charAt(0) || '?' }}
+                                </div>
+                            }
+
+                            <div class="comment-author-info">
+                                <strong>
+                                    {{ comentario.autor?.nombre }}
+                                    {{ comentario.autor?.apellido }}
+                                </strong>
+                                <span>@{{ comentario.autor?.username }}</span>
+                            </div>
+                        </div>
+
+                        <time>
+                            {{ comentario.createdAt | date: 'dd/MM/yyyy HH:mm' }}
+                        </time>
+                    </div>
+
+                    <p class="comment-message">{{ comentario.mensaje }}</p>
+                </article>
+            }
+        </div>
+    }
+</section>

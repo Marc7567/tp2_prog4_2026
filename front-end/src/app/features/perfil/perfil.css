@@ -112,3 +112,54 @@ button:disabled {
 .success {
     color: #258348;
 }
+
+
+.my-publications {
+    margin-top: 32px;
+}
+
+.my-publications h2 {
+    margin-bottom: 8px;
+}
+
+.my-publication-details {
+    margin-top: 16px;
+    padding: 20px;
+    border: 1px solid #e2e2e2;
+    border-radius: 12px;
+    background: #ffffff;
+}
+
+.my-publication-header {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    color: #666666;
+    font-size: 0.9rem;
+}
+
+.my-publication-details h3 {
+    margin-bottom: 8px;
+}
+
+.my-publication-message {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+}
+
+.my-publication-image {
+    display: block;
+    width: 100%;
+    max-height: 400px;
+    margin-top: 12px;
+    border-radius: 8px;
+    object-fit: contain;
+}
+
+.my-publication-details app-comentarios {
+    display: block;
+    margin-top: 18px;
+}

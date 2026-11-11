@@ -11,6 +11,7 @@ import { AuthModule } from './auth/auth.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 import { PublicacionesModule } from './publicaciones/publicaciones.module';
 import { LogsMiddleware } from './middleware/login.middleware';
+import { ComentariosModule } from './comentarios/comentarios.module';
 
 // Carga las variables de .env antes de configurar los modulos.
 if (existsSync('.env')) loadEnvFile('.env');
@@ -31,7 +32,8 @@ if (!mongoUri) {
         PublicacionesModule,
 
         // Limita las peticiones para reducir abusos de la API.
-        ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }])
+        ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
+        ComentariosModule
     ],
     controllers: [AppController],
     providers: [

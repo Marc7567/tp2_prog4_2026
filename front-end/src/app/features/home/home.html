@@ -39,15 +39,17 @@
       />
 
       @if (imagenSeleccionada()) {
-        <p class="file-name">Imagen seleccionada: {{ imagenSeleccionada()?.name }}</p>
+        <p class="file-name">
+          Imagen seleccionada: {{ imagenSeleccionada()?.name }}
+        </p>
       }
 
       @if (error()) {
-        <p class="message error">{{ error() }}</p>
+        <p class="message error" role="alert">{{ error() }}</p>
       }
 
       @if (mensaje()) {
-        <p class="message success">{{ mensaje() }}</p>
+        <p class="message success" role="status">{{ mensaje() }}</p>
       }
 
       <button type="submit" [disabled]="publicando()">
@@ -82,18 +84,22 @@
           [publicacion]="publicacion"
           [accionEnCurso]="accionEnCurso() === publicacion._id"
           (meGusta)="alternarMeGusta($event)"
-          (eliminar)="eliminarPublicacion($event)"
+          (eliminar)="solicitarEliminar($event)"
         />
       }
     }
 
     @if (total() > 0) {
       <div class="pagination">
-        <button type="button" (click)="cambiarPagina(-1)" [disabled]="pagina() === 0 || cargando()">
+        <button
+          type="button"
+          (click)="cambiarPagina(-1)"
+          [disabled]="pagina() === 0 || cargando()"
+        >
           Anterior
         </button>
 
-        <span> Pagina {{ pagina() + 1 }} de {{ totalPaginas }} </span>
+        <span>Pagina {{ pagina() + 1 }} de {{ totalPaginas }}</span>
 
         <button
           type="button"
@@ -106,3 +112,42 @@
     }
   </div>
 </section>
+
+@if (publicacionPendienteEliminar(); as publicacion) {
+  <div class="modal-overlay">
+    <section
+      class="confirm-modal"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="titulo-modal-eliminar"
+      aria-describedby="texto-modal-eliminar"
+    >
+      <h2 id="titulo-modal-eliminar">Eliminar</h2>
+
+      <p id="texto-modal-eliminar">
+        Estas seguro de que queres eliminar esta publicacion
+        <strong>"{{ publicacion.titulo }}"</strong>?
+      </p>
+
+      <div class="modal-actions">
+        <button
+          type="button"
+          class="cancel-button"
+          (click)="cancelarEliminar()"
+          [disabled]="eliminando()"
+        >
+          Cancelar
+        </button>
+
+        <button
+          type="button"
+          class="confirm-delete-button"
+          (click)="confirmarEliminar()"
+          [disabled]="eliminando()"
+        >
+          {{ eliminando() ? 'Eliminando...' : 'Eliminar' }}
+        </button>
+      </div>
+    </section>
+  </div>
+}

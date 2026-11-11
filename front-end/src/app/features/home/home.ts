@@ -1,6 +1,5 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { DatePipe } from '@angular/common';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
 import { Publicacion } from '../../core/models/publicacion.interface';
 import { PublicacionDetail } from '../publicacion-detail/publicacion-detail';
@@ -8,7 +7,7 @@ import { PublicacionDetail } from '../publicacion-detail/publicacion-detail';
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [FormsModule, DatePipe, PublicacionDetail],
+  imports: [FormsModule, PublicacionDetail],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
@@ -30,6 +29,10 @@ export class Home implements OnInit {
   texto = '';
   imagenSeleccionada = signal<File | null>(null);
   accionEnCurso = signal('');
+
+  // Control del modal de eliminacion
+  publicacionPendienteEliminar = signal<Publicacion | null>(null);
+  eliminando = signal(false);
 
   ngOnInit(): void {
     this.cargarPublicaciones();
@@ -55,8 +58,9 @@ export class Home implements OnInit {
               : detalle || 'No se pudieron cargar las publicaciones',
           );
           this.cargando.set(false);
-        },
-      });
+        }
+      }
+    );
   }
 
   cambiarOrden(orden: string): void {
@@ -155,6 +159,7 @@ export class Home implements OnInit {
 
     this.accionEnCurso.set(publicacion._id);
     this.error.set('');
+    this.mensaje.set('');
 
     const peticion = publicacion.meGustaUsuario
       ? this.publicacionesService.quitarMeGusta(publicacion._id)
@@ -166,35 +171,54 @@ export class Home implements OnInit {
           lista.map((item) =>
             item._id === publicacion._id
               ? {
-                  ...item,
-                  cantidadMeGusta: respuesta.cantidadMeGusta,
-                  meGustaUsuario: respuesta.meGustaUsuario,
-                }
-              : item,
-          ),
+                ...item,
+                cantidadMeGusta: respuesta.cantidadMeGusta,
+                meGustaUsuario: respuesta.meGustaUsuario
+              }
+              : item
+          )
         );
         this.accionEnCurso.set('');
       },
       error: (error) => {
-        this.error.set(error?.error?.message || 'No se pudo actualizar el me gusta');
+        const detalle = error?.error?.message;
+        this.error.set(
+          Array.isArray(detalle)
+            ? detalle.join(', ')
+            : detalle || 'No se pudo actualizar el me gusta'
+        );
         this.accionEnCurso.set('');
-      },
+      }
     });
   }
 
-  eliminarPublicacion(publicacion: Publicacion): void {
-    if (this.accionEnCurso()) return;
+  solicitarEliminar(publicacion: Publicacion): void {
+    if (this.accionEnCurso() || this.eliminando()) return;
 
-    // corregir el mensaje de confirmacion para que sea mas claro que se esta eliminando la publicacion
-    const confirmar = confirm(`Estas seguro de que queres eliminar "${publicacion.titulo}"?`);
+    this.error.set('');
+    this.mensaje.set('');
+    this.publicacionPendienteEliminar.set(publicacion);
+  }
 
-    if (!confirmar) return;
+  cancelarEliminar(): void {
+    if (this.eliminando()) return;
 
+    this.publicacionPendienteEliminar.set(null);
+  }
+
+  confirmarEliminar(): void {
+    const publicacion = this.publicacionPendienteEliminar();
+
+    if (!publicacion || this.eliminando() || this.accionEnCurso()) return;
+
+    this.eliminando.set(true);
     this.accionEnCurso.set(publicacion._id);
     this.error.set('');
 
     this.publicacionesService.eliminar(publicacion._id).subscribe({
       next: () => {
+        this.publicacionPendienteEliminar.set(null);
+        this.eliminando.set(false);
         this.accionEnCurso.set('');
         this.mensaje.set('La publicacion se elimino correctamente');
 
@@ -205,9 +229,16 @@ export class Home implements OnInit {
         this.cargarPublicaciones();
       },
       error: (error) => {
-        this.error.set(error?.error?.message || 'No se pudo eliminar la publicacion');
+        const detalle = error?.error?.message;
+        this.error.set(
+          Array.isArray(detalle)
+            ? detalle.join(', ')
+            : detalle || 'No se pudo eliminar la publicacion'
+        );
+        this.eliminando.set(false);
         this.accionEnCurso.set('');
-      },
+        this.publicacionPendienteEliminar.set(null);
+      }
     });
   }
 

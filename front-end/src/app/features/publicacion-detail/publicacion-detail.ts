@@ -3,11 +3,12 @@ import { DatePipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service';
 import { Publicacion } from '../../core/models/publicacion.interface';
 import { Usuario } from '../../core/models/usuario.interface';
+import { Comentarios } from '../comentarios/comentarios';
 
 @Component({
     selector: 'app-publicacion-detail',
     standalone: true,
-    imports: [DatePipe],
+    imports: [DatePipe, Comentarios],
     templateUrl: './publicacion-detail.html',
     styleUrl: './publicacion-detail.css',
 })
