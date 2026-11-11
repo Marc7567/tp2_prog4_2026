@@ -10,15 +10,12 @@
 
         <div class="author-info">
             <strong>
-                {{ publicacion.autor?.nombre }}
-                {{ publicacion.autor?.apellido }}
+                {{ publicacion.autor?.nombre }} {{ publicacion.autor?.apellido }}
             </strong>
-            <span>@{{ publicacion.autor?.username }}</span>
+            <span>{{ publicacion.autor?.username }}</span>
         </div>
 
-        <time>
-            {{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}
-        </time>
+        <time>{{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}</time>
     </div>
 
     <h3>{{ publicacion.titulo }}</h3>
@@ -26,7 +23,7 @@
     <p class="publication-message">{{ publicacion.mensaje }}</p>
 
     @if (publicacion.imagen) {
-    <img class="publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion">
+        <img class="publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion">
     }
 
     <div class="publication-actions">
@@ -36,9 +33,9 @@
         </button>
 
         @if (puedeEliminar()) {
-        <button type="button" class="delete-button" (click)="eliminar.emit(publicacion)" [disabled]="accionEnCurso">
-            Eliminar
-        </button>
+            <button type="button" class="delete-button" (click)="eliminar.emit(publicacion)" [disabled]="accionEnCurso">
+                Eliminar
+            </button>
         }
     </div>
     
