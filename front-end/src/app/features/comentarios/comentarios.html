@@ -5,10 +5,9 @@
         <p>Cargando comentarios...</p>
     } @else if (error) {
         <p class="comment-error">{{ error }}</p>
-
         <button type="button" (click)="cargarComentarios()">Reintentar</button>
     } @else if (comentarios.length === 0) {
-            <p class="empty-comments">Todavia no hay comentarios.</p>
+        <p class="empty-comments">No hay comentarios.</p>
     } @else {
         <div class="comments-list">
             @for (comentario of comentarios; track comentario._id) {

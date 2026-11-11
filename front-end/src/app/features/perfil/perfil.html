@@ -48,7 +48,7 @@
             <input id="imagenPerfil" name="imagenPerfil" type="file" accept="image/jpeg,image/png,image/webp"
                 (change)="seleccionarImagen($event)" />
 
-            <p class="role">Rol: {{ usuario()?.rol }}</p>
+            <!-- <p class="role">Rol: {{ usuario()?.rol }}</p> -->
 
             @if (error()) {
                 <p class="error" role="alert">{{ error() }}</p>
@@ -66,9 +66,6 @@
 
     <section class="my-publications">
         <h2>Mis ultimas publicaciones</h2>
-        <p class="subtitle">
-            Estas son tus tres publicaciones mas recientes.
-        </p>
 
         @if (cargandoPublicaciones()) {
             <p>Cargando tus publicaciones...</p>
@@ -81,7 +78,7 @@
                 <article class="my-publication-details">
                     <div class="my-publication-header">
                         <time>{{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
-                        <span>{{ publicacion.cantidadMeGusta }} me gusta</span>
+                        <span>Cantidad de me gusta: {{ publicacion.cantidadMeGusta }}</span>
                     </div>
 
                     <h3>{{ publicacion.titulo }}</h3>
