@@ -17,7 +17,8 @@
     color: #777;
 }
 
-.create-card, .publication-card {
+.create-card,
+.publication-card {
     background: white;
     border: 1px solid #e7e7e7;
     border-radius: 14px;
@@ -108,60 +109,73 @@ button:disabled {
     padding: 25px;
 }
 
-.publication-author {
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
     display: flex;
     align-items: center;
-    gap: 12px;
-    margin-bottom: 18px;
+    justify-content: center;
+    padding: 20px;
+    background: rgb(0 0 0 / 55%);
 }
 
-.publication-author div:nth-child(2) {
+.confirm-modal {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    border-radius: 14px;
+    background: #fff;
+    color: #222;
+    box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
+}
+
+.confirm-modal h2 {
+    margin: 0 0 16px;
+    font-size: 1.4rem;
+}
+
+.confirm-modal p {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.modal-actions {
     display: flex;
-    flex-direction: column;
-    gap: 3px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
 }
 
-.publication-author span,
-.publication-author time {
-    color: #888;
-    font-size: 13px;
+.modal-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.publication-author time {
-    margin-left: auto;
+.cancel-button {
+    background: #eee;
+    color: #333;
 }
 
-.avatar,
-.avatar-placeholder {
-    width: 43px;
-    height: 43px;
-    border-radius: 50%;
-    object-fit: cover;
+.confirm-delete-button {
+    background: #c62828;
+    color: #fff;
 }
 
-.avatar-placeholder {
-    display: grid;
-    place-items: center;
-    background: #ff6f00;
-    color: white;
-    font-weight: bold;
+.modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
 }
 
-.publication-card h3 {
-    margin: 0 0 10px;
+.cancel-button:not(:disabled):hover {
+    background: #ddd;
 }
 
-.publication-message {
-    color: #444;
-    white-space: pre-wrap;
-    line-height: 1.6;
-}
-
-.publication-image {
-    display: block;
-    max-width: 100%;
-    max-height: 500px;
-    object-fit: contain;
-    border-radius: 10px;
-    margin-top: 15px;
+.confirm-delete-button:not(:disabled):hover {
+    background: #a51f1f;
 }

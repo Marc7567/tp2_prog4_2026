@@ -158,3 +158,8 @@ button:disabled {
     border-radius: 8px;
     object-fit: contain;
 }
+
+.my-publication-details app-comentarios {
+    display: block;
+    margin-top: 18px;
+}

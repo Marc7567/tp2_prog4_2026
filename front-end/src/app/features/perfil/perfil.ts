@@ -6,13 +6,14 @@ import { Publicacion } from '../../core/models/publicacion.interface';
 import { AuthService } from '../../core/services/auth.service';
 import { PerfilService } from '../../core/services/perfil.service';
 import { PublicacionesService } from '../../core/services/publicaciones.service';
+import { Comentarios } from '../comentarios/comentarios';
 
 @Component({
     selector: 'app-perfil',
     standalone: true,
-    imports: [FormsModule, DatePipe],
+    imports: [FormsModule, DatePipe, Comentarios],
     templateUrl: './perfil.html',
-    styleUrl: './perfil.css'
+    styleUrl: './perfil.css',
 })
 
 export class Perfil implements OnInit {
@@ -57,7 +58,8 @@ export class Perfil implements OnInit {
                 this.apellido = usuario.apellido;
                 this.username = usuario.username;
                 this.email = usuario.email;
-                this.fechaNacimiento = usuario.fechaNacimiento?.slice(0, 10) ?? '';
+                this.fechaNacimiento =
+                    usuario.fechaNacimiento?.slice(0, 10) ?? '';
                 this.descripcion = usuario.descripcion ?? '';
 
                 this.cargando.set(false);
@@ -146,9 +148,7 @@ export class Perfil implements OnInit {
             next: (usuario) => {
                 this.usuario.set(usuario);
                 this.authService.actualizarUsuario(usuario);
-
                 this.imagenSeleccionada = null;
-
                 this.mensaje.set('Perfil actualizado correctamente');
                 this.guardando.set(false);
             },
@@ -156,10 +156,11 @@ export class Perfil implements OnInit {
                 const detalle = error?.error?.message;
 
                 this.error.set(
-                    Array.isArray(detalle) ? detalle.join(', ') : detalle || 'No se pudo actualizar el perfil'
+                    Array.isArray(detalle) ? detalle.join(', ')
+                        : detalle || 'No se pudo actualizar el perfil'
                 );
                 this.guardando.set(false);
-            },
+            }
         });
     }
 }

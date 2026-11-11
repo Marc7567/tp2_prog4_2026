@@ -4,15 +4,18 @@
 
     @if (cargando()) {
         <p>Cargando perfil...</p>
-    } @else {
+    } @else if (error()) {
+        <p class="error" role="alert">{{ error() }}</p>
+    }
+
     <section class="my-publication-details">
         <div class="profile-picture">
             @if (usuario()?.imagenPerfil) {
                 <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil" />
             } @else {
-                <div class="empty-avatar">
-                    {{ nombre.charAt(0) || '?' }}
-                </div>
+            <div class="empty-avatar">
+                {{ nombre.charAt(0) || '?' }}
+            </div>
             }
         </div>
 
@@ -20,80 +23,39 @@
             <div class="form-row">
                 <div>
                     <label for="nombre">Nombre</label>
-                    <input 
-                        id="nombre" 
-                        name="nombre" 
-                        type="text" 
-                        [(ngModel)]="nombre" 
-                        required 
-                    />
+                    <input id="nombre" name="nombre" type="text" [(ngModel)]="nombre" required />
                 </div>
 
                 <div>
                     <label for="apellido">Apellido</label>
-                    <input 
-                        id="apellido" 
-                        name="apellido" 
-                        type="text" 
-                        [(ngModel)]="apellido" 
-                        required 
-                    />
+                    <input id="apellido" name="apellido" type="text" [(ngModel)]="apellido" required />
                 </div>
             </div>
 
             <label for="username">Nombre de usuario</label>
-            <input 
-                id="username" 
-                name="username" 
-                type="text" 
-                [(ngModel)]="username" 
-                required 
-            />
+            <input id="username" name="username" type="text" [(ngModel)]="username" required />
 
             <label for="email">Email</label>
-            <input 
-                id="email" 
-                name="email" 
-                type="email" 
-                [(ngModel)]="email" 
-                required 
-            />
+            <input id="email" name="email" type="email" [(ngModel)]="email" required />
 
             <label for="fechaNacimiento">Fecha de nacimiento</label>
-            <input 
-                id="fechaNacimiento" 
-                name="fechaNacimiento" 
-                type="date" 
-                [(ngModel)]="fechaNacimiento" 
-                required 
-            />
+            <input id="fechaNacimiento" name="fechaNacimiento" type="date" [(ngModel)]="fechaNacimiento" required />
 
             <label for="descripcion">Descripcion</label>
-            <textarea 
-                id="descripcion" 
-                name="descripcion" 
-                [(ngModel)]="descripcion" 
-                maxlength="300" 
-                rows="4"
-            ></textarea>
+            <textarea id="descripcion" name="descripcion" [(ngModel)]="descripcion" maxlength="300" rows="4"></textarea>
 
             <label for="imagenPerfil">Cambiar foto de perfil</label>
-            <input 
-                id="imagenPerfil" 
-                name="imagenPerfil" 
-                type="file" 
-                accept="image/jpeg,image/png,image/webp"
-                (change)="seleccionarImagen($event)" 
-            />
+            <input id="imagenPerfil" name="imagenPerfil" type="file" accept="image/jpeg,image/png,image/webp"
+                (change)="seleccionarImagen($event)" />
 
             <p class="role">Rol: {{ usuario()?.rol }}</p>
 
             @if (error()) {
-                <p class="error">{{ error() }}</p>
+                <p class="error" role="alert">{{ error() }}</p>
             }
 
             @if (mensaje()) {
-                <p class="success">{{ mensaje() }}</p>
+                <p class="success" role="status">{{ mensaje() }}</p>
             }
 
             <button type="submit" [disabled]="guardando()">
@@ -104,23 +66,26 @@
 
     <section class="my-publications">
         <h2>Mis ultimas publicaciones</h2>
-        <p class="subtitle">Estas son tus tres publicaciones mas recientes.</p>
+        <p class="subtitle">
+            Estas son tus tres publicaciones mas recientes.
+        </p>
 
         @if (cargandoPublicaciones()) {
             <p>Cargando tus publicaciones...</p>
         } @else if (errorPublicaciones()) {
-            <p class="error">{{ errorPublicaciones() }}</p>
+            <p class="error" role="alert">{{ errorPublicaciones() }}</p>
         } @else if (misPublicaciones().length === 0) {
             <p>Todavia no creaste ninguna publicacion.</p>
         } @else {
             @for (publicacion of misPublicaciones(); track publicacion._id) {
                 <article class="my-publication-details">
                     <div class="my-publication-header">
-                        <time> {{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
-                        <span> {{ publicacion.cantidadMeGusta }} me gusta </span>
+                        <time>{{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+                        <span>{{ publicacion.cantidadMeGusta }} me gusta</span>
                     </div>
 
                     <h3>{{ publicacion.titulo }}</h3>
+
                     <p class="my-publication-message">
                         {{ publicacion.mensaje }}
                     </p>
@@ -128,9 +93,10 @@
                     @if (publicacion.imagen) {
                         <img class="my-publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion" />
                     }
+
+                    <app-comentarios [publicacionId]="publicacion._id" />
                 </article>
             }
         }
     </section>
-    }
 </section>
