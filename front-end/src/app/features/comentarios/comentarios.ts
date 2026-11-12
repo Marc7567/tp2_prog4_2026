@@ -1,7 +1,7 @@
 import { Component, Input, OnInit, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { ComentariosService } from '../../core/services/comentarios.service';
-import { Comentario } from '../../core/models/comentario.interface';
+import { ComentariosService } from '../../core/services/comentarios.service.js';
+import { Comentario } from '../../core/models/comentario.interface.js';
 
 @Component({
     selector: 'app-comentarios',

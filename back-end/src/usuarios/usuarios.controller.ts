@@ -30,6 +30,7 @@ export class UsuariosController {
             },
         }),
     )
+
     async crear(
         @Body() datos: CrearUsuarioDto,
         @UploadedFile() archivo?: Express.Multer.File

@@ -1,22 +1,52 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { UsuariosModule } from '../usuarios/usuarios.module.js';
 import { AuthService } from './auth.service.js';
 import { AuthController } from './auth.controller.js';
 
 @Module({
     imports: [
-        // Configura JWT con una clave secreta y una duracion de 24 horas.
-        JwtModule.register({
+        ConfigModule,
+        JwtModule.registerAsync({
             global: true,
-            secret: process.env.JWT_SECRET,
-            signOptions: {
-                expiresIn: '1d',
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useFactory: (configService: ConfigService) => {
+                const secret = configService.get<string>('JWT_SECRET');
+
+                if (!secret) {
+                    throw new Error('Falta configurar JWT_SECRET');
+                }
+
+                return {
+                    secret,
+                    signOptions: {
+                        expiresIn: '1d',
+                    },
+                };
             },
         }),
-        UsuariosModule
+        UsuariosModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService]
+    providers: [AuthService],
 })
 export class AuthModule {}
+
+// @Module({
+//     imports: [
+//         // Configura JWT con una clave secreta y una duracion de 24 horas.
+//         JwtModule.register({
+//             global: true,
+//             secret: process.env.JWT_SECRET,
+//             signOptions: {
+//                 expiresIn: '1d',
+//             },
+//         }),
+//         UsuariosModule
+//     ],
+//     controllers: [AuthController],
+//     providers: [AuthService]
+// })
+// export class AuthModule {}

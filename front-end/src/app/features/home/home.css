@@ -179,3 +179,21 @@ button:disabled {
 .confirm-delete-button:not(:disabled):hover {
     background: #a51f1f;
 }
+
+/* limites de caracteres titulo y descripcion */
+.character-count {
+  margin: 4px 0 8px;
+  text-align: right;
+  font-size: 0.85rem;
+  color: #666;
+}
+
+.character-count.limit-reached,
+.field-warning {
+  color: #c62828;
+}
+
+.field-warning {
+  margin: 4px 0 10px;
+  font-size: 0.85rem;
+}

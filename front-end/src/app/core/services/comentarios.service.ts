@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { environment } from '../../../environments/environment';
-import { Comentario } from '../models/comentario.interface';
+import { environment } from '../../../environments/environment.js';
+import { Comentario } from '../models/comentario.interface.js';
 
 @Injectable({
     providedIn: 'root',

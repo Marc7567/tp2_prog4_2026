@@ -1,9 +1,9 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { DatePipe } from '@angular/common';
-import { AuthService } from '../../core/services/auth.service';
-import { Publicacion } from '../../core/models/publicacion.interface';
-import { Usuario } from '../../core/models/usuario.interface';
-import { Comentarios } from '../comentarios/comentarios';
+import { AuthService } from '../../core/services/auth.service.js';
+import { Publicacion } from '../../core/models/publicacion.interface.js';
+import { Usuario } from '../../core/models/usuario.interface.js';
+import { Comentarios } from '../comentarios/comentarios.js';
 
 @Component({
     selector: 'app-publicacion-detail',

@@ -3,12 +3,12 @@ import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 export class CrearPublicacionDto {
     @IsString()
     @IsNotEmpty()
-    @MaxLength(100)
+    @MaxLength(20)
     titulo!: string;
 
     @IsString()
     @IsNotEmpty()
-    @MaxLength(2000)
+    @MaxLength(300)
     mensaje!: string;
 
     // imagen es opcional y puede recibirse como URL.

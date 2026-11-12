@@ -14,21 +14,37 @@
         type="text"
         name="titulo"
         [(ngModel)]="titulo"
-        maxlength="100"
+        maxlength="20"
         placeholder="Escribi un titulo"
         required
       />
+
+      @if (titulo.length >= maxTitulo) {
+        <p class="field-warning" role="status">
+          El titulo no puede superar los 20 caracteres.
+        </p>
+      }
 
       <label for="texto">Descripcion</label>
       <textarea
         id="texto"
         name="texto"
         [(ngModel)]="texto"
-        maxlength="2000"
+        maxlength="300"
         rows="4"
         placeholder="Descripcion"
         required
       ></textarea>
+
+      <p class="character-count" [class.limit-reached]="texto.length >= maxTexto">
+        {{ texto.length }} / {{ maxTexto }} caracteres
+      </p>
+
+      @if (texto.length >= maxTexto) {
+        <p class="field-warning" role="status">
+          La descripcion solo pude contener 300 caracteres.
+        </p>
+      }
 
       <label for="imagen">Imagen (opcional)</label> 
       <input
