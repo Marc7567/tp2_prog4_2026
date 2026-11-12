@@ -1,4 +1,4 @@
-import { AutorPublicacion } from './publicacion.interface';
+import { AutorPublicacion } from './publicacion.interface.js';
 
 export interface Comentario {
     _id: string;

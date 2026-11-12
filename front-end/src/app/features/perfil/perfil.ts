@@ -1,12 +1,12 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { DatePipe } from '@angular/common';
-import { Usuario } from '../../core/models/usuario.interface';
-import { Publicacion } from '../../core/models/publicacion.interface';
-import { AuthService } from '../../core/services/auth.service';
-import { PerfilService } from '../../core/services/perfil.service';
-import { PublicacionesService } from '../../core/services/publicaciones.service';
-import { Comentarios } from '../comentarios/comentarios';
+import { Usuario } from '../../core/models/usuario.interface.js';
+import { Publicacion } from '../../core/models/publicacion.interface.js';
+import { AuthService } from '../../core/services/auth.service.js';
+import { PerfilService } from '../../core/services/perfil.service.js';
+import { PublicacionesService } from '../../core/services/publicaciones.service.js';
+import { Comentarios } from '../comentarios/comentarios.js';
 
 @Component({
     selector: 'app-perfil',

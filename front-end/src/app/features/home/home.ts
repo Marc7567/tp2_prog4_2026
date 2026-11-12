@@ -1,8 +1,8 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { PublicacionesService } from '../../core/services/publicaciones.service';
-import { Publicacion } from '../../core/models/publicacion.interface';
-import { PublicacionDetail } from '../publicacion-detail/publicacion-detail';
+import { PublicacionesService } from '../../core/services/publicaciones.service.js';
+import { Publicacion } from '../../core/models/publicacion.interface.js';
+import { PublicacionDetail } from '../publicacion-detail/publicacion-detail.js';
 
 @Component({
   selector: 'app-home',
@@ -33,6 +33,9 @@ export class Home implements OnInit {
   // Control del modal de eliminacion
   publicacionPendienteEliminar = signal<Publicacion | null>(null);
   eliminando = signal(false);
+
+  readonly maxTitulo = 20;
+  readonly maxTexto = 300;
 
   ngOnInit(): void {
     this.cargarPublicaciones();
@@ -116,6 +119,16 @@ export class Home implements OnInit {
 
     if (!titulo || !texto) {
       this.error.set('Completa el titulo y el mensaje');
+      return;
+    }
+
+    if (titulo.length > this.maxTitulo) {
+      this.error.set('El titulo es muy largo (max: 20 caracteres)');
+      return;
+    }
+
+    if (texto.length > this.maxTexto) {
+      this.error.set('La descripcion es muy larga (max: 300 caracteres)');
       return;
     }
 
