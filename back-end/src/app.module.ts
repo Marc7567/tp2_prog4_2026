@@ -1,6 +1,4 @@
 import { MiddlewareConsumer, Module, NestModule } from '@nestjs/common';
-import { APP_GUARD } from '@nestjs/core';
-import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
 import { AppController } from './app.controller.js';
@@ -22,28 +20,19 @@ import { ComentariosModule } from './comentarios/comentarios.module.js';
 
 @Module({
     imports: [
-        // Carga las variables de entorno disponibles.
         ConfigModule.forRoot({
             isGlobal: true,
             ignoreEnvFile: process.env.VERCEL === '1',
         }),
 
-        // Conexion con MongoDB Atlas.
         MongooseModule.forRoot(process.env.MONGODB_URI ?? ''),
-        ConfigModule.forRoot({ isGlobal: true }),
         AuthModule,
         UsuariosModule,
         PublicacionesModule,
-
-        // Limita las peticiones para reducir abusos de la API.
-        ThrottlerModule.forRoot([{ ttl: 60000, limit: 100 }]),
-        ComentariosModule
+        ComentariosModule,
     ],
     controllers: [AppController],
-    providers: [
-        AppService,
-        { provide: APP_GUARD, useClass: ThrottlerGuard },
-    ]
+    providers: [AppService],
 })
 
 export class AppModule implements NestModule {
