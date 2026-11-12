@@ -3,8 +3,6 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { existsSync } from 'node:fs';
-import { loadEnvFile } from 'node:process';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -13,19 +11,25 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module';
 import { LogsMiddleware } from './middleware/login.middleware';
 import { ComentariosModule } from './comentarios/comentarios.module';
 
-// Carga las variables de .env antes de configurar los modulos.
-if (existsSync('.env')) loadEnvFile('.env');
+// // Carga las variables de .env antes de configurar los modulos.
+// if (existsSync('.env')) loadEnvFile('.env');
 
-const mongoUri = process.env.MONGODB_URI;
+// const mongoUri = process.env.MONGODB_URI;
 
-if (!mongoUri) {
-    throw new Error('Configurá MONGODB_URI en .env con la conexión de MongoDB Atlas',);
-}
+// if (!mongoUri) {
+//     throw new Error('Configurá MONGODB_URI en .env con la conexión de MongoDB Atlas',);
+// }
 
 @Module({
     imports: [
+        // Carga las variables de entorno disponibles.
+        ConfigModule.forRoot({
+            isGlobal: true,
+            ignoreEnvFile: process.env.VERCEL === '1',
+        }),
+
         // Conexion con MongoDB Atlas.
-        MongooseModule.forRoot(mongoUri),
+        MongooseModule.forRoot(process.env.MONGODB_URI ?? ''),
         ConfigModule.forRoot({ isGlobal: true }),
         AuthModule,
         UsuariosModule,
@@ -41,9 +45,10 @@ if (!mongoUri) {
         { provide: APP_GUARD, useClass: ThrottlerGuard },
     ]
 })
+
 export class AppModule implements NestModule {
     // Registra el middleware de logs para todas las rutas.
     configure(consumer: MiddlewareConsumer) {
-      consumer.apply(LogsMiddleware).forRoutes('*');
+        consumer.apply(LogsMiddleware).forRoutes('*');
     }
 }
