@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Publicacion, PublicacionSchema } from './schemas/publicaciones.schema';
-import { Usuario, UsuarioSchema } from '../usuarios/schemas/usuario.schema';
-import { PublicacionesController } from './publicaciones.controller';
-import { PublicacionesService } from './publicaciones.service';
-import { AuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ImagenesModule } from '../imagenes/imagenes.module';
+import { Publicacion, PublicacionSchema } from './schemas/publicaciones.schema.js';
+import { Usuario, UsuarioSchema } from '../usuarios/schemas/usuario.schema.js';
+import { PublicacionesController } from './publicaciones.controller.js';
+import { PublicacionesService } from './publicaciones.service.js';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { ImagenesModule } from '../imagenes/imagenes.module.js';
 
 @Module({
     imports: [

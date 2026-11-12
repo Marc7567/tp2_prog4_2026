@@ -1,9 +1,9 @@
 import { BadRequestException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Publicacion } from './schemas/publicaciones.schema';
-import { CrearPublicacionDto } from './dto/crear-publicacion.dto';
-import { Usuario } from '../usuarios/schemas/usuario.schema';
+import { Publicacion } from './schemas/publicaciones.schema.js';
+import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
+import { Usuario } from '../usuarios/schemas/usuario.schema.js';
 
 @Injectable()
 export class PublicacionesService {

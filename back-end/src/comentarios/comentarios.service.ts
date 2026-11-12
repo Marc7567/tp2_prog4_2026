@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model, Types } from 'mongoose';
-import { Comentario } from './schemas/comentario.schema';
-import { Publicacion } from '../publicaciones/schemas/publicaciones.schema';
+import { Comentario } from './schemas/comentario.schema.js';
+import { Publicacion } from '../publicaciones/schemas/publicaciones.schema.js';
 
 @Injectable()
 export class ComentariosService {

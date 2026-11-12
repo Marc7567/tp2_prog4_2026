@@ -2,11 +2,11 @@ import { BadRequestException, Body, Controller, Delete, Get, Param, Post, Query,
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Express, Request } from 'express';
-import { PublicacionesService } from './publicaciones.service';
-import { CrearPublicacionDto } from './dto/crear-publicacion.dto';
-import { AuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service';
-import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor';
+import { PublicacionesService } from './publicaciones.service.js';
+import { CrearPublicacionDto } from './dto/crear-publicacion.dto.js';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service.js';
+import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor.js';
 import { JwtService } from '@nestjs/jwt';
 import { Types } from 'mongoose';
 
