@@ -1,8 +1,8 @@
 import { ConflictException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Usuario } from './schemas/usuario.schema';
-import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto';
+import { Usuario } from './schemas/usuario.schema.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 
 @Injectable()
 export class PerfilService {

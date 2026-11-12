@@ -2,11 +2,11 @@ import { Body, Controller, Get, Patch, Req, UploadedFile, UseGuards, UseIntercep
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Express, Request } from 'express';
-import { AuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service';
-import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor';
-import { PerfilService } from './perfil.service';
-import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service.js';
+import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor.js';
+import { PerfilService } from './perfil.service.js';
+import { ActualizarPerfilDto } from './dto/actualizar-perfil.dto.js';
 
 interface RequestAutenticado extends Request {
     user: { sub: string; };

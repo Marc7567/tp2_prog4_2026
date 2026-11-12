@@ -2,10 +2,10 @@ import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/c
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
 import type { Express } from 'express';
-import { UsuariosService } from './usuarios.service';
-import { CrearUsuarioDto } from './dto/crear-usuario.dto';
-import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service';
-import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor';
+import { UsuariosService } from './usuarios.service.js';
+import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
+import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service.js';
+import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor.js';
 
 @Controller('usuarios')
 export class UsuariosController {

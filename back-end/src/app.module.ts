@@ -3,13 +3,13 @@ import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { MongooseModule } from '@nestjs/mongoose';
 import { ConfigModule } from '@nestjs/config';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
-import { AuthModule } from './auth/auth.module';
-import { UsuariosModule } from './usuarios/usuarios.module';
-import { PublicacionesModule } from './publicaciones/publicaciones.module';
-import { LogsMiddleware } from './middleware/login.middleware';
-import { ComentariosModule } from './comentarios/comentarios.module';
+import { AppController } from './app.controller.js';
+import { AppService } from './app.service.js';
+import { AuthModule } from './auth/auth.module.js';
+import { UsuariosModule } from './usuarios/usuarios.module.js';
+import { PublicacionesModule } from './publicaciones/publicaciones.module.js';
+import { LogsMiddleware } from './middleware/login.middleware.js';
+import { ComentariosModule } from './comentarios/comentarios.module.js';
 
 // // Carga las variables de .env antes de configurar los modulos.
 // if (existsSync('.env')) loadEnvFile('.env');

@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
-import { ImagenesService } from './imagenes.service';
-import { ImagenesInterceptor } from './imagenes.interceptor';
+import { ImagenesService } from './imagenes.service.js';
+import { ImagenesInterceptor } from './imagenes.interceptor.js';
 
 @Module({
     providers: [

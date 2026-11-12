@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Usuario, UsuarioSchema } from './schemas/usuario.schema';
-import { UsuariosService } from './usuarios.service';
-import { UsuariosController } from './usuarios.controller';
-import { ImagenesModule } from '../imagenes/imagenes.module';
-import { PerfilController } from './perfil.controller';
-import { PerfilService } from './perfil.service';
-import { AuthGuard } from '../auth/guards/jwt-auth.guard';
+import { Usuario, UsuarioSchema } from './schemas/usuario.schema.js';
+import { UsuariosService } from './usuarios.service.js';
+import { UsuariosController } from './usuarios.controller.js';
+import { ImagenesModule } from '../imagenes/imagenes.module.js';
+import { PerfilController } from './perfil.controller.js';
+import { PerfilService } from './perfil.service.js';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @Module({
     imports: [
