@@ -101,6 +101,12 @@ export class PublicacionesController {
         );
     }
 
+    @Get(':id')
+    @UseGuards(AuthGuard)
+    obtenerPorId(@Param('id') id: string, @Req() request: RequestAutenticado) {
+        return this.publicacionesService.obtenerPorId(id, request.user.sub);
+    }
+
     @Delete(':id')
     @UseGuards(AuthGuard)
     eliminar(@Param('id') id: string, @Req() request: RequestAutenticado) {

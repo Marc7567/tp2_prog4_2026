@@ -79,13 +79,11 @@ export class PublicacionesService {
             this.modelo
                 .aggregate([
                     { $match: filtro },
+                    { $addFields: {
+                        cantidadMeGusta: { $size: { $ifNull: ['$meGusta', []] } },
+                    }},
                     {
-                        $addFields: {
-                            cantidadMeGusta: { $size: { $ifNull: ['$meGusta', []] } },
-                        },
-                    },
-                    {
-                        $sort: orden === 'meGusta' ? { cantidadMeGusta: -1, createdAt: -1 } : { createdAt: -1 },
+                        $sort: orden === 'meGusta' ? { cantidadMeGusta: -1, createdAt: -1 } : { createdAt: -1 }
                     },
                     { $skip: offset },
                     { $limit: limit },
@@ -116,7 +114,7 @@ export class PublicacionesService {
                             meGustaUsuario: {
                                 $in: [
                                     new Types.ObjectId(usuarioActualId),
-                                    { $ifNull: ['$meGusta', []] },
+                                    { $ifNull: ['$meGusta', []] }
                                 ]
                             }
                         }
@@ -127,6 +125,35 @@ export class PublicacionesService {
         ]);
 
         return { items: publicaciones, total, offset, limit };
+    }
+
+    async obtenerPorId(id: string, usuarioActualId: string) {
+        if (!Types.ObjectId.isValid(id)) {
+            throw new BadRequestException('ID de publicacion invalido');
+        }
+        const publicacion = await this.modelo
+            .findOne({ _id: id, eliminada: false })
+            .select('+meGusta')
+            .populate('autor', 'nombre apellido username imagenPerfil')
+            .exec();
+
+        if (!publicacion) {
+            throw new NotFoundException('Publicacion no encontrada');
+        }
+
+        const likes = publicacion.meGusta ?? [];
+        
+        return {
+            _id: publicacion._id,
+            titulo: publicacion.titulo,
+            mensaje: publicacion.mensaje,
+            imagen: publicacion.imagen,
+            autor: publicacion.autor,
+            cantidadMeGusta: likes.length,
+            meGustaUsuario: likes.some((idUsuario) => idUsuario.toString() === usuarioActualId),
+            createdAt: publicacion.createdAt,
+            updatedAt: publicacion.updatedAt
+        };
     }
 
     async eliminar(id: string, usuarioId: string) {

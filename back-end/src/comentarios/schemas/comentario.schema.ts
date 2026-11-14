@@ -4,13 +4,13 @@ import { Schema as MongooseSchema } from 'mongoose';
 
 @Schema({ timestamps: true })
 export class Comentario {
-    @Prop({ required: true, trim: true, maxlength: 1000 })
+    @Prop({ required: true, trim: true, maxlength: 300 })
     mensaje!: string;
 
     @Prop({
         type: MongooseSchema.Types.ObjectId,
         ref: 'Usuario',
-        required: true,
+        required: true
     })
     autor!: Types.ObjectId;
 
@@ -18,9 +18,12 @@ export class Comentario {
         type: MongooseSchema.Types.ObjectId,
         ref: 'Publicacion',
         required: true,
-        index: true,
+        index: true
     })
     publicacion!: Types.ObjectId;
+
+    @Prop({ default: false })
+    modificado!: boolean;
 
     createdAt!: Date;
     updatedAt!: Date;
