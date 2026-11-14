@@ -3,6 +3,6 @@ import { IsNotEmpty, IsString, MaxLength } from 'class-validator';
 export class CrearComentarioDto {
     @IsString()
     @IsNotEmpty()
-    @MaxLength(1000)
+    @MaxLength(300)
     mensaje!: string;
 }
