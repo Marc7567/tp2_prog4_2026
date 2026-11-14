@@ -7,4 +7,5 @@ export interface Comentario {
     publicacion: string;
     createdAt: string;
     updatedAt: string;
+    modificado: boolean;
 }

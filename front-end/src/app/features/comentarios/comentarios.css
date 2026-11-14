@@ -83,3 +83,51 @@
     color: #666;
     margin-top: 16px;
 }
+
+.comment-form, .edit-form {
+    display: grid;
+    gap: 10px;
+    margin: 14px 0 20px;
+}
+
+.comment-form textarea, .edit-form textarea {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font: inherit;
+    resize: vertical;
+}
+
+.comment-form button, .edit-form button,
+.load-more, .secondary-button {
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 7px;
+    cursor: pointer;
+}
+
+.comment-form button, .edit-form button[type="submit"], .load-more {
+    background: #5260ff;
+    color: white;
+}
+
+.secondary-button {
+    background: #e8e8e8;
+    color: #222;
+    margin-right: 6px;
+}
+
+.edited-label, .comment-success {
+    color: #36734b;
+}
+
+.comment-success {
+    margin: 8px 0;
+}
+
+.load-more {
+    display: block;
+    margin: 16px auto 0;
+}

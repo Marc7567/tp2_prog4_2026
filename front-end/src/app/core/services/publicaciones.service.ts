@@ -29,6 +29,10 @@ export class PublicacionesService {
         return this.http.get<RespuestaPublicaciones>(this.url, { params });
     }
 
+    obtenerPorId(id: string) {
+        return this.http.get<Publicacion>(`${this.url}/${id}`);
+    }
+
     crear(datos: FormData) {
         return this.http.post<Publicacion>(this.url, datos);
     }

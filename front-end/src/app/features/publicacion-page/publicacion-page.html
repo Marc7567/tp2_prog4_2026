@@ -1,0 +1,11 @@
+<main class="publication-page">
+    <a routerLink="/home" class="back-link">Volver a publicaciones</a>
+
+    @if (cargando()) {
+        <p role="status">Cargando publicacion...</p>
+    } @else if (error()) {
+        <p class="page-error" role="alert">{{ error() }}</p>
+    } @else if (publicacion(); as item) {
+        <app-publicacion-detail [publicacion]="item" />
+    }
+</main>

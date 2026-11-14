@@ -1,0 +1,15 @@
+.publication-page {
+    width: min(900px, calc(100% - 32px));
+    margin: 24px auto;
+}
+
+.back-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    color: #5260ff;
+    text-decoration: none;
+}
+
+.page-error {
+    color: #b42318;
+}
