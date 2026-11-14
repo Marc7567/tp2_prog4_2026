@@ -8,7 +8,13 @@ export const routes: Routes = [
     {
         path: 'home',
         canActivate: [authGuard],
-        loadComponent: () => import('./features/home/home').then(c => c.Home)
+        loadComponent: () => import('./features/home/home').then(c => c.Home),
+        children: [
+            {
+                path: 'publicacion/:id',
+                loadComponent: () => import('./features/publicacion-page/publicacion-page').then(c => c.PublicacionPage)
+            }
+        ]
     },
     {
         path: 'login',

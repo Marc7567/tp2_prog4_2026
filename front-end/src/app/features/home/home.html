@@ -9,14 +9,14 @@
 
     <form (ngSubmit)="crearPublicacion()">
       <label for="titulo">Titulo</label>
-      <input
-        id="titulo"
-        type="text"
-        name="titulo"
-        [(ngModel)]="titulo"
-        maxlength="20"
+      <input 
+        id="titulo" 
+        type="text" 
+        name="titulo" 
+        [(ngModel)]="titulo" 
+        maxlength="20" 
         placeholder="Escribi un titulo"
-        required
+        required 
       />
 
       @if (titulo.length >= maxTitulo) {
@@ -26,12 +26,12 @@
       }
 
       <label for="texto">Descripcion</label>
-      <textarea
-        id="texto"
-        name="texto"
-        [(ngModel)]="texto"
-        maxlength="300"
-        rows="4"
+      <textarea 
+        id="texto" 
+        name="texto" 
+        [(ngModel)]="texto" 
+        maxlength="300" 
+        rows="4" 
         placeholder="Descripcion"
         required
       ></textarea>
@@ -46,12 +46,12 @@
         </p>
       }
 
-      <label for="imagen">Imagen (opcional)</label> 
-      <input
-        id="imagen"
-        type="file"
-        accept="image/jpeg,image/png,image/webp"
-        (change)="seleccionarImagen($event)"
+      <label for="imagen">Imagen (opcional)</label>
+      <input 
+        id="imagen" 
+        type="file" 
+        accept="image/jpeg,image/png,image/webp" 
+        (change)="seleccionarImagen($event)" 
       />
 
       @if (imagenSeleccionada()) {
@@ -79,9 +79,9 @@
       <h2>Ultimas publicaciones</h2>
 
       <label for="orden">Ordenar por</label>
-      <select
-        id="orden"
-        [ngModel]="orden"
+      <select 
+        id="orden" 
+        [ngModel]="orden" 
         (ngModelChange)="cambiarOrden($event)"
         [ngModelOptions]="{ standalone: true }"
       >
@@ -95,21 +95,23 @@
     } @else if (publicaciones().length === 0) {
       <p class="status">Todavia no hay publicaciones.</p>
     } @else {
+
       @for (publicacion of publicaciones(); track publicacion._id) {
-        <app-publicacion-detail
-          [publicacion]="publicacion"
-          [accionEnCurso]="accionEnCurso() === publicacion._id"
+        <app-publicacion-detail 
+          [publicacion]="publicacion" 
+          [mostrarComentarios]="false"
+          [accionEnCurso]="accionEnCurso() === publicacion._id" 
           (meGusta)="alternarMeGusta($event)"
-          (eliminar)="solicitarEliminar($event)"
+          (eliminar)="solicitarEliminar($event)" 
         />
       }
     }
 
     @if (total() > 0) {
       <div class="pagination">
-        <button
-          type="button"
-          (click)="cambiarPagina(-1)"
+        <button 
+          type="button" 
+          (click)="cambiarPagina(-1)" 
           [disabled]="pagina() === 0 || cargando()"
         >
           Anterior
@@ -117,9 +119,9 @@
 
         <span>Pagina {{ pagina() + 1 }} de {{ totalPaginas }}</span>
 
-        <button
-          type="button"
-          (click)="cambiarPagina(1)"
+        <button 
+          type="button" 
+          (click)="cambiarPagina(1)" 
           [disabled]="pagina() + 1 >= totalPaginas || cargando()"
         >
           Siguiente
@@ -131,36 +133,25 @@
 
 @if (publicacionPendienteEliminar(); as publicacion) {
   <div class="modal-overlay">
-    <section
-      class="confirm-modal"
-      role="dialog"
-      aria-modal="true"
+    <section 
+      class="confirm-modal" 
+      role="dialog" 
+      aria-modal="true" 
       aria-labelledby="titulo-modal-eliminar"
       aria-describedby="texto-modal-eliminar"
     >
       <h2 id="titulo-modal-eliminar">Eliminar</h2>
 
       <p id="texto-modal-eliminar">
-        Estas seguro de que queres eliminar esta publicacion
-        <strong>"{{ publicacion.titulo }}"</strong>?
+        Estas seguro de que queres eliminar esta publicacion <strong>"{{ publicacion.titulo }}"</strong>?
       </p>
 
       <div class="modal-actions">
-        <button
-          type="button"
-          class="cancel-button"
-          (click)="cancelarEliminar()"
-          [disabled]="eliminando()"
-        >
+        <button type="button" class="cancel-button" (click)="cancelarEliminar()" [disabled]="eliminando()">
           Cancelar
         </button>
 
-        <button
-          type="button"
-          class="confirm-delete-button"
-          (click)="confirmarEliminar()"
-          [disabled]="eliminando()"
-        >
+        <button type="button" class="confirm-delete-button" (click)="confirmarEliminar()" [disabled]="eliminando()">
           {{ eliminando() ? 'Eliminando...' : 'Eliminar' }}
         </button>
       </div>

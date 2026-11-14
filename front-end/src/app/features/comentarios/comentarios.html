@@ -1,13 +1,22 @@
 <section class="comments-section">
-    <h4>Comentarios ({{ comentarios.length }})</h4>
+    <h4>Comentarios ({{ total }})</h4>
 
+    <form class="comment-form" (ngSubmit)="crearComentario()">
+        <label for="nuevo-comentario">Escribi un comentario</label>
+        <textarea id="nuevo-comentario" name="nuevoComentario" [(ngModel)]="nuevoComentario" maxlength="1000" rows="3" required></textarea>
+        <button type="submit" [disabled]="enviando || !nuevoComentario.trim()">{{ enviando ? 'Publicando...' : 'Comentar' }}</button>
+    </form>
+
+    @if (error) { 
+        <p class="comment-error" role="alert">{{ error }}</p> 
+    }
+    @if (mensaje) { 
+        <p class="comment-success" role="status">{{ mensaje }}</p> 
+    }
     @if (cargando) {
         <p>Cargando comentarios...</p>
-    } @else if (error) {
-        <p class="comment-error">{{ error }}</p>
-        <button type="button" (click)="cargarComentarios()">Reintentar</button>
     } @else if (comentarios.length === 0) {
-        <p class="empty-comments">No hay comentarios.</p>
+        <p class="empty-comments">Todavia no hay comentarios.</p>
     } @else {
         <div class="comments-list">
             @for (comentario of comentarios; track comentario._id) {
@@ -17,28 +26,38 @@
                             @if (comentario.autor?.imagenPerfil) {
                                 <img class="comment-avatar" [src]="comentario.autor.imagenPerfil" alt="Foto de perfil" />
                             } @else {
-                                <div class="comment-avatar-placeholder">
-                                    {{ comentario.autor?.nombre?.charAt(0) || '?' }}
-                                </div>
+                                <div class="comment-avatar-placeholder">{{ comentario.autor?.nombre?.charAt(0) || '?' }}</div>
                             }
-
                             <div class="comment-author-info">
-                                <strong>
-                                    {{ comentario.autor?.nombre }}
-                                    {{ comentario.autor?.apellido }}
-                                </strong>
+                                <strong>{{ comentario.autor?.nombre }} {{ comentario.autor?.apellido }}</strong>
                                 <span>@{{ comentario.autor?.username }}</span>
                             </div>
                         </div>
-
-                        <time>
-                            {{ comentario.createdAt | date: 'dd/MM/yyyy HH:mm' }}
-                        </time>
+                        <time>{{ comentario.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
                     </div>
 
-                    <p class="comment-message">{{ comentario.mensaje }}</p>
+                    @if (comentarioEditando === comentario._id) {
+                        <form class="edit-form" (ngSubmit)="guardarEdicion(comentario)">
+                            <textarea name="textoEdicion" [(ngModel)]="textoEdicion" maxlength="1000" required></textarea>
+                            <button type="submit" [disabled]="!textoEdicion.trim()">Guardar</button>
+                            <button type="button" class="secondary-button" (click)="cancelarEdicion()">Cancelar</button>
+                        </form>
+                    } @else {
+                        <p class="comment-message">{{ comentario.mensaje }}</p>
+                        @if (comentario.modificado) { 
+                            <small class="edited-label">Editado</small> 
+                        }
+                        @if (Editar(comentario)) {
+                            <button type="button" class="secondary-button" (click)="iniciarEdicion(comentario)">Editar</button>
+                        }
+                    }
                 </article>
             }
         </div>
+        @if (comentarios.length < total) {
+            <button type="button" class="load-more" (click)="cargarMas()" [disabled]="cargandoMas">
+                {{ cargandoMas ? 'Cargando...' : 'Cargar mas' }}
+            </button>
+        }
     }
 </section>

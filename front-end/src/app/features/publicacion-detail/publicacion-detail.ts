@@ -3,20 +3,23 @@ import { DatePipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service.js';
 import { Publicacion } from '../../core/models/publicacion.interface.js';
 import { Usuario } from '../../core/models/usuario.interface.js';
+import { RouterLink } from '@angular/router';
 import { Comentarios } from '../comentarios/comentarios.js';
 
 @Component({
     selector: 'app-publicacion-detail',
     standalone: true,
-    imports: [DatePipe, Comentarios],
+    imports: [DatePipe, Comentarios, RouterLink],
     templateUrl: './publicacion-detail.html',
     styleUrl: './publicacion-detail.css',
 })
+
 export class PublicacionDetail {
     private authService = inject(AuthService);
 
     @Input({ required: true }) publicacion!: Publicacion;
     @Input() accionEnCurso = false;
+    @Input() mostrarComentarios = true;
 
     @Output() meGusta = new EventEmitter<Publicacion>();
     @Output() eliminar = new EventEmitter<Publicacion>();

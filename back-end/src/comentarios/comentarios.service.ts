@@ -48,8 +48,8 @@ export class ComentariosService {
     async crear(publicacionId: string, usuarioId: string, mensaje: string) {
         this.validarId(publicacionId, 'publicacionId');
         const texto = mensaje?.trim();
-        if (!texto || texto.length > 1000) {
-            throw new BadRequestException('El comentario debe tener entre 1 y 1000 caracteres');
+        if (!texto || texto.length > 300) {
+            throw new BadRequestException('El comentario debe tener menos de 300 caracteres');
         }
 
         const publicacion = await this.publicacionModel.findOne({
