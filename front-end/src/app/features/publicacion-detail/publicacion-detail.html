@@ -18,7 +18,12 @@
         <time>{{ publicacion.createdAt | date:'dd/MM/yyyy HH:mm' }}</time>
     </div>
 
-    <h3><a [routerLink]="['/publicacion', publicacion._id]">{{ publicacion.titulo }}</a></h3>
+    <!-- ruta para ir a la pagina de la publicacion -->
+    <h3>
+        <a [routerLink]="['/publicacion', publicacion._id]">
+            {{ publicacion.titulo }}
+        </a>
+    </h3>
 
     <p class="publication-message">{{ publicacion.mensaje }}</p>
 

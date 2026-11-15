@@ -131,3 +131,14 @@
     display: block;
     margin: 16px auto 0;
 }
+
+.edited-label {
+    display: block;
+    margin-top: 8px;
+    font-size: 0.9rem;
+    color: #777;
+}
+
+.comment-actions {
+    margin-top: 10px;
+}

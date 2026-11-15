@@ -97,9 +97,8 @@
     } @else {
 
       @for (publicacion of publicaciones(); track publicacion._id) {
-        <app-publicacion-detail 
-          [publicacion]="publicacion" 
-          [mostrarComentarios]="false"
+        <app-publicacion-detail
+          [publicacion]="publicacion"
           [accionEnCurso]="accionEnCurso() === publicacion._id" 
           (meGusta)="alternarMeGusta($event)"
           (eliminar)="solicitarEliminar($event)" 

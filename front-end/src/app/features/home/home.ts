@@ -11,6 +11,7 @@ import { PublicacionDetail } from '../publicacion-detail/publicacion-detail.js';
   templateUrl: './home.html',
   styleUrl: './home.css',
 })
+
 export class Home implements OnInit {
   private publicacionesService = inject(PublicacionesService);
 

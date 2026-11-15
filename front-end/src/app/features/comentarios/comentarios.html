@@ -3,7 +3,7 @@
 
     <form class="comment-form" (ngSubmit)="crearComentario()">
         <label for="nuevo-comentario">Escribi un comentario</label>
-        <textarea id="nuevo-comentario" name="nuevoComentario" [(ngModel)]="nuevoComentario" maxlength="1000" rows="3" required></textarea>
+        <textarea id="nuevo-comentario" name="nuevoComentario" [(ngModel)]="nuevoComentario" maxlength="300" rows="3" required></textarea>
         <button type="submit" [disabled]="enviando || !nuevoComentario.trim()">{{ enviando ? 'Publicando...' : 'Comentar' }}</button>
     </form>
 
@@ -38,18 +38,28 @@
 
                     @if (comentarioEditando === comentario._id) {
                         <form class="edit-form" (ngSubmit)="guardarEdicion(comentario)">
-                            <textarea name="textoEdicion" [(ngModel)]="textoEdicion" maxlength="1000" required></textarea>
+                            <textarea name="textoEdicion" [(ngModel)]="textoEdicion" maxlength="300" required></textarea>
                             <button type="submit" [disabled]="!textoEdicion.trim()">Guardar</button>
                             <button type="button" class="secondary-button" (click)="cancelarEdicion()">Cancelar</button>
                         </form>
                     } @else {
                         <p class="comment-message">{{ comentario.mensaje }}</p>
-                        @if (comentario.modificado) { 
-                            <small class="edited-label">Editado</small> 
+
+                        @if (comentario.modificado) {
+                            <small class="edited-label">Editado</small>
                         }
+
                         @if (Editar(comentario)) {
-                            <button type="button" class="secondary-button" (click)="iniciarEdicion(comentario)">Editar</button>
+                            <div class="comment-actions">
+                                <button
+                                    type="button"
+                                    class="secondary-button"
+                                    (click)="iniciarEdicion(comentario)">
+                                    Editar
+                                </button>
+                            </div>
                         }
+
                     }
                 </article>
             }
