@@ -9,15 +9,6 @@ import { PublicacionesModule } from './publicaciones/publicaciones.module.js';
 import { LogsMiddleware } from './middleware/login.middleware.js';
 import { ComentariosModule } from './comentarios/comentarios.module.js';
 
-// // Carga las variables de .env antes de configurar los modulos.
-// if (existsSync('.env')) loadEnvFile('.env');
-
-// const mongoUri = process.env.MONGODB_URI;
-
-// if (!mongoUri) {
-//     throw new Error('Configurá MONGODB_URI en .env con la conexión de MongoDB Atlas',);
-// }
-
 @Module({
     imports: [
         ConfigModule.forRoot({
