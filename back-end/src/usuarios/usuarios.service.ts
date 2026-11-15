@@ -12,6 +12,7 @@ export class UsuariosService {
         private readonly modelo: Model<Usuario>
     ) {}
 
+
     // Busca un usuario por su email.
     async buscarPorEmail(email: string) {
         return this.modelo.findOne({ email }).exec();

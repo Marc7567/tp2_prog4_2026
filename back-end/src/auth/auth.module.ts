@@ -22,31 +22,16 @@ import { AuthController } from './auth.controller.js';
                 return {
                     secret,
                     signOptions: {
-                        expiresIn: '1d',
-                    },
+                        // expiresIn: '15m'
+                        expiresIn: '4m' //expira en 4 minutos
+                    }
                 };
-            },
+            }
         }),
         UsuariosModule,
     ],
     controllers: [AuthController],
     providers: [AuthService],
 })
-export class AuthModule {}
 
-// @Module({
-//     imports: [
-//         // Configura JWT con una clave secreta y una duracion de 24 horas.
-//         JwtModule.register({
-//             global: true,
-//             secret: process.env.JWT_SECRET,
-//             signOptions: {
-//                 expiresIn: '1d',
-//             },
-//         }),
-//         UsuariosModule
-//     ],
-//     controllers: [AuthController],
-//     providers: [AuthService]
-// })
-// export class AuthModule {}
+export class AuthModule {}
