@@ -8,13 +8,17 @@ export const routes: Routes = [
     {
         path: 'home',
         canActivate: [authGuard],
-        loadComponent: () => import('./features/home/home').then(c => c.Home),
-        children: [
-            {
-                path: 'publicacion/:id',
-                loadComponent: () => import('./features/publicacion-page/publicacion-page').then(c => c.PublicacionPage)
-            }
-        ]
+        loadComponent: () => import('./features/home/home').then(c => c.Home)
+    },
+    {
+        path: 'publicacion/:id',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/publicacion-page/publicacion-page').then(c => c.PublicacionPage)
+    },
+    {
+        path: 'perfil',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/perfil/perfil').then(c => c.Perfil)
     },
     {
         path: 'login',
@@ -23,11 +27,6 @@ export const routes: Routes = [
     {
         path: 'register',
         loadComponent: () => import('./features/auth/register/register').then(c => c.Register)
-    },
-    {
-        path: 'perfil',
-        canActivate: [authGuard],
-        loadComponent: () => import('./features/perfil/perfil').then(c => c.Perfil)
     },
     {
         path: '**',

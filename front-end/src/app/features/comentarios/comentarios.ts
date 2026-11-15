@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, inject } from '@angular/core';
+import { Component, Input, OnInit, inject, ChangeDetectorRef } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ComentariosService } from '../../core/services/comentarios.service.js';
@@ -16,6 +16,7 @@ import { AuthService } from '../../core/services/auth.service.js';
 export class Comentarios implements OnInit {
     private comentariosService = inject(ComentariosService);
     private authService = inject(AuthService);
+    private cdr = inject(ChangeDetectorRef);
 
     @Input({ required: true }) publicacionId!: string;
 
@@ -53,11 +54,13 @@ export class Comentarios implements OnInit {
                 this.total = respuesta.total;
                 this.offset = respuesta.items.length;
                 this.cargando = false;
+                this.cdr.markForCheck();
             },
             error: () => {
-                this.error = 'No se pudieron cargar los comentarios.';
+                this.error = 'No se pudo cargar los comentarios.';
                 this.cargando = false;
-            },
+                this.cdr.markForCheck();
+            }
         });
     }
 
@@ -83,47 +86,42 @@ export class Comentarios implements OnInit {
                 this.total = respuesta.total;
                 this.offset += respuesta.items.length;
                 this.cargandoMas = false;
+                this.cdr.markForCheck();
             },
             error: () => {
                 this.error = 'No se pudieron cargar mas comentarios.';
                 this.cargandoMas = false;
+                this.cdr.markForCheck();
             },
         });
     }
 
     crearComentario(): void {
         const mensaje = this.nuevoComentario.trim();
-
-        if (!mensaje || this.enviando) {
-            return;
-        }
+        if (!mensaje || this.enviando) return;
 
         this.enviando = true;
         this.error = '';
         this.mensaje = '';
 
-        this.comentariosService.crear(
-            this.publicacionId,
-            mensaje,
-        ).subscribe({
+        this.comentariosService.crear(this.publicacionId, mensaje).subscribe({
             next: (comentario) => {
-                this.comentarios = [
-                    comentario,
-                    ...this.comentarios,
-                ];
-
+                this.comentarios = [comentario, ...this.comentarios];
                 this.total++;
                 this.offset++;
                 this.nuevoComentario = '';
                 this.enviando = false;
                 this.mensaje = 'Comentario publicado correctamente.';
+                this.cdr.markForCheck();
             },
             error: () => {
-                this.error = 'No se pudo publicar el comentario.';
+                this.error = 'No se pudo publicar su comentario.';
                 this.enviando = false;
+                this.cdr.markForCheck();
             },
         });
     }
+
 
     Editar(comentario: Comentario): boolean {
         const usuario = this.authService.currentUser();
@@ -173,9 +171,11 @@ export class Comentarios implements OnInit {
 
                 this.cancelarEdicion();
                 this.mensaje = 'Comentario editado correctamente.';
+                this.cdr.markForCheck();
             },
             error: () => {
                 this.error = 'No se pudo editar el comentario.';
+                this.cdr.markForCheck();
             },
         });
     }
