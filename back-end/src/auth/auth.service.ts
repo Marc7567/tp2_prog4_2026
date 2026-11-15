@@ -68,4 +68,14 @@ export class AuthService {
             },
         };
     }
+
+    // Genara un nuevo Token con los datos recibidos
+    async renovarToken(payload: {
+        sub: string; email: string; nombre: string;
+        rol: 'usuario' | 'administrador';
+    }) {
+        const access_token = await this.jwtService.signAsync(payload);
+
+        return { access_token };
+    }
 }
