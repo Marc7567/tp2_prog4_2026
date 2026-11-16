@@ -24,7 +24,7 @@ import { AuthGuard } from './guards/jwt-auth.guard.js';
                     secret,
                     signOptions: {
                         // expiresIn: '15m'
-                        expiresIn: '4m' //expira en 4 minutos
+                        expiresIn: '5m' //expira en 5 minutos
                     }
                 };
             }

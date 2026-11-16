@@ -13,3 +13,64 @@
     position: relative;
     min-height: 100%;
 }
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgb(0 0 0 / 55%);
+}
+
+.session-modal {
+    width: 100%;
+    max-width: 430px;
+    padding: 28px;
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: 0 12px 35px rgb(0 0 0 / 20%);
+}
+
+.session-modal h2 {
+    margin-top: 0;
+    color: #252525;
+    font-size: 1.4rem;
+}
+
+.session-modal p {
+    color: #555;
+    line-height: 1.6;
+}
+
+.modal-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 7px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+.btn-extend {
+    background: #5260ff;
+    color: #fff;
+}
+
+.btn-logout {
+    background: #e8e8e8;
+    color: #333;
+}
+
+.modal-actions button:hover {
+    filter: brightness(0.94);
+}
