@@ -18,7 +18,13 @@ export class App implements OnInit {
   constructor(private contexts: ChildrenOutletContexts) {}
 
   ngOnInit(): void {
-    this.auth.restaurarSesion().subscribe();
+    this.auth.restaurarSesion().subscribe((usuario) => {
+      if (usuario) {
+        void this.router.navigate(['/home']);
+      } else {
+        void this.router.navigate(['/login']);
+      }
+    });
   }
 
   renovarSesion(): void {

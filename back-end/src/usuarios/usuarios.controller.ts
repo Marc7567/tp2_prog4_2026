@@ -70,7 +70,7 @@ export class UsuariosController {
 
         return {
             access_token: accessToken,
-            usuario,
+            usuario
         };
     }
 }
