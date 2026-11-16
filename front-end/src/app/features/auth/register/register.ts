@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service.js';
 
 @Component({
@@ -10,9 +10,11 @@ import { AuthService } from '../../../core/services/auth.service.js';
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
+
 export class Register {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
+  private router = inject(Router);
 
   registroForm = this.fb.group({
     nombre: ['', [Validators.required, Validators.minLength(2)]],
@@ -79,19 +81,34 @@ export class Register {
     }
 
     this.authService.signUp(datos).subscribe({
-      next: () => {
+      // Se ejecuta cuando el registro finaliza correctamente.
+      next: (respuesta) => {
+        const usuario = {
+          ...respuesta.usuario,
+          // adapatamos el campo a id. (campo utilizado en el front)
+          id: respuesta.usuario.id ?? respuesta.usuario._id
+        };
+
+        // guardamos el token JWT y los datos del usuario
+        // en el localStorage.
+        this.authService.iniciarSesion(
+          respuesta.access_token, usuario
+        );
+
         this.isLoading.set(false);
-        this.successMessage.set('Cuenta creada correctamente. Ya puedes iniciar sesion.');
-        this.registroForm.reset();
-        this.imagenPerfil = null;
-        this.nombreImagen.set('');
+        this.router.navigate(['/home']);
       },
+
+      //En caso de que se rechaze el registro o ocurre un error.
       error: (error) => {
+        // Dejamos de mostrar el indicador de carga.
         this.isLoading.set(false);
+
+        // mostramos el mensaje de error
         this.errorMessage.set(
           typeof error.error?.message === 'string'
             ? error.error.message
-            : 'No se pudo crear la cuenta. Revisa los datos e intenta nuevamente.',
+            : 'No se pudo crear la cuenta. Revisa los datos e intenta nuevamente.'
         );
       },
     });

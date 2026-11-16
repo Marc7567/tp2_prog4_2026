@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, of, tap } from 'rxjs';
+import { Observable, catchError, finalize, map, of, tap, timer } from 'rxjs';
 import { environment } from '../../../environments/environment.js';
 import { Usuario } from '../models/usuario.interface.js';
 
@@ -32,6 +32,8 @@ export class AuthService {
     mostrarRenovacion = signal(false);
     mostrarExpiracion = signal(false);
 
+    cargandoInicio = signal(true);
+
     currentUser = signal<Usuario | null>(this.obtenerUsuarioGuardado());
     currentUserData = signal<Usuario | null>(this.obtenerUsuarioGuardado());
 
@@ -51,8 +53,23 @@ export class AuthService {
         );
     }
 
-    signUp(datos: FormData) {
-        return this.http.post(this.url + '/usuarios/registro', datos);
+    // Registra un usuario.
+    signUp(datos: FormData): Observable<{
+        access_token: string;
+        usuario: Omit<Usuario, 'id'> & {
+            _id: string;
+            id?: string;
+        };
+    }> {
+        // Enviamos los datos del formulario al endpoint de registro.
+        // El backend devuelve el token JWT y los datos del usuario creado.
+        return this.http.post<{
+            access_token: string;
+            usuario: Omit<Usuario, 'id'> & {
+                _id: string;
+                id?: string;
+            };
+        }>(this.url + '/usuarios/registro', datos);
     }
 
     iniciarSesion(token: string, usuario: Usuario) {
@@ -66,21 +83,52 @@ export class AuthService {
 
         return of(usuario);
     }
-
     restaurarSesion(): Observable<Usuario | null> {
         const token = this.accessToken();
-        const usuario = this.obtenerUsuarioGuardado();
 
-        if (!token || !usuario) {
+        if (!token) {
             this.signOut();
-            return of(null);
+
+            return timer(3000).pipe(
+                map(() => null),
+                tap(() => this.cargandoInicio.set(false))
+            );
         }
 
-        this.currentUser.set(usuario);
-        this.currentUserData.set(usuario);
-        this.iniciarTemporizador(token);
+        return this.http
+            .post<{autorizado: boolean; usuario: Usuario}>(
+                this.url + '/auth/autorizar', {}
+            )
+            .pipe(
+                tap((respuesta) => {
+                    if (!respuesta.autorizado || !respuesta.usuario) {
+                        this.signOut();
+                        return;
+                    }
 
-        return of(usuario);
+                    const usuario = respuesta.usuario;
+
+                    localStorage.setItem(
+                        this.usuarioKey,
+                        JSON.stringify(usuario)
+                    );
+
+                    this.currentUser.set(usuario);
+                    this.currentUserData.set(usuario);
+
+                    this.iniciarTemporizador(token);
+                }),
+                map((respuesta) => respuesta.autorizado ? respuesta.usuario : null),
+                catchError(() => {
+                    this.signOut();
+                    return of(null);
+                }),
+                finalize(() => {
+                    timer(2000).subscribe(() => {
+                        this.cargandoInicio.set(false);
+                    });
+                })
+            );
     }
 
     renovarSesion(): Observable<{ access_token: string } | null> {

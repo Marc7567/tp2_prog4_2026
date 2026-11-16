@@ -1,10 +1,28 @@
-<app-header />
-<main class="content">
-  <div class="route-container">
-    <router-outlet />
+<!-- Pantalla de carga -->
+@if (auth.cargandoInicio()) {
+  <div class="cargar-screen" role="status" aria-live="polite">
+  <div class="cargar-icon-container">
+    <div class="cargar-spinner"></div>
+
+    <!-- icono del tp2 -->
+    <img
+      src="/favicon.svg"
+      alt="icono"
+      class="cargar-icon"
+    />
   </div>
-</main>
-<app-footer />
+
+  <p>Verificando tu sesion...</p>
+</div>
+} @else {
+  <app-header/>
+  <main class="content">
+    <div class="route-container">
+      <router-outlet/>
+    </div>
+  </main>
+  <app-footer/>
+}
 
 @if (auth.mostrarRenovacion()) {
   <div class="modal-overlay">
