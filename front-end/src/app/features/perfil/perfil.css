@@ -1,3 +1,5 @@
+
+/* Contenedor general del perfil. */
 .profile-container {
     width: min(700px, 92%);
     margin: 35px auto;
@@ -12,23 +14,33 @@ h1 {
     margin-bottom: 25px;
 }
 
+/* Tarjeta principal del perfil. */
 .profile-card {
-    background: white;
-    border: 1px solid #e7e7e7;
-    border-radius: 14px;
     padding: 28px;
-    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.04);
+    background: #ffffff;
+    border: 1px solid #ededed;
+    border-radius: 16px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.035);
+}
+
+/* Foto, nombre de usuario y boton. */
+.profile-top {
+    display: grid;
+    grid-template-columns: 130px minmax(0, 1fr);
+    align-items: start;
+    gap: 30px;
 }
 
 .profile-picture {
     display: flex;
     justify-content: center;
-    margin-bottom: 25px;
+    margin: 4px 0 0;
 }
 
-.profile-picture img, .empty-avatar {
-    width: 110px;
-    height: 110px;
+.profile-picture img,
+.empty-avatar {
+    width: 112px;
+    height: 112px;
     border-radius: 50%;
     object-fit: cover;
 }
@@ -36,75 +48,112 @@ h1 {
 .empty-avatar {
     display: grid;
     place-items: center;
-    background: #ff6f00;
-    color: white;
-    font-size: 40px;
-    font-weight: bold;
+    background: linear-gradient(135deg, #ff8f00, #d84315);
+    color: #ffffff;
+    font-size: 42px;
+    font-weight: 700;
 }
 
-form {
+.profile-main {
+    min-width: 0;
+}
+
+.profile-heading {
     display: flex;
-    flex-direction: column;
-    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
 }
 
-.form-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 15px;
-}
-
-.form-row div {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
-label {
+.profile-heading h2 {
+    margin: 0;
+    color: #262626;
+    font-size: 25px;
     font-weight: 600;
-    font-size: 14px;
+    overflow-wrap: anywhere;
 }
 
-input, textarea {
-    width: 100%;
-    box-sizing: border-box;
-    padding: 12px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
+/* Descripcion del usuario. */
+.profile-bio {
+    margin-top: 20px;
+    color: #444444;
+    font-size: 14px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+/* Boton de edicion sin efecto de escala. */
+.edit-profile-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    padding: 9px 18px;
+    border: 1px solid #d84315;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #d84315;
     font: inherit;
-}
-
-textarea {
-    resize: vertical;
-}
-
-input:focus, textarea:focus {
-    outline: none;
-    border-color: #ff6f00;
-}
-
-.role {
-    color: #777;
     font-size: 14px;
-}
-
-button {
-    align-self: flex-end;
-    background: #d84315;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 12px 24px;
     font-weight: 600;
     cursor: pointer;
-    margin-top: 10px;
+    transition: background 0.2s, color 0.2s;
 }
 
-button:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
+.edit-profile-button:hover {
+    background: #d84315;
+    color: #ffffff;
 }
 
+.edit-profile-button:focus-visible {
+    outline: 3px solid #ffcc80;
+    outline-offset: 3px;
+}
+
+/* Separador de la tarjeta. */
+.profile-divider {
+    height: 1px;
+    margin: 26px 0;
+    background: #eeeeee;
+}
+
+/* Nombre y apellido, correo y fecha de nacimiento. */
+.profile-details {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+}
+
+.profile-detail {
+    min-width: 0;
+    padding: 15px;
+    border: 1px solid #eeeeee;
+    border-radius: 10px;
+    background: #fcfcfc;
+}
+
+.profile-detail > div {
+    min-width: 0;
+}
+
+.detail-label {
+    display: block;
+    margin-bottom: 6px;
+    color: #777777;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.profile-detail p {
+    margin: 0;
+    color: #292929;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Mensajes de estado. */
 .error {
     color: #c62828;
 }
@@ -113,7 +162,7 @@ button:disabled {
     color: #258348;
 }
 
-
+/* Ultimas publicaciones. */
 .my-publications {
     margin-top: 32px;
 }

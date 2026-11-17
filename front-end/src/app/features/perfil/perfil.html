@@ -1,68 +1,81 @@
 <section class="profile-container">
     <h1>Mi perfil</h1>
-    <p class="subtitle">Consulta y modifica tus datos personales.</p>
+    <p class="subtitle">Consulta tus datos personales y tus publicaciones.</p>
 
     @if (cargando()) {
         <p>Cargando perfil...</p>
     } @else if (error()) {
         <p class="error" role="alert">{{ error() }}</p>
-    }
-
-    <section class="my-publication-details">
-        <div class="profile-picture">
-            @if (usuario()?.imagenPerfil) {
-                <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil" />
-            } @else {
-            <div class="empty-avatar">
-                {{ nombre.charAt(0) || '?' }}
+    } @else {
+        <div class="profile-top">
+            <div class="profile-picture">
+                @if (usuario()?.imagenPerfil) {
+                    <img
+                        [src]="usuario()?.imagenPerfil"
+                        alt="Foto de perfil"
+                    />
+                } @else {
+                    <div class="empty-avatar">
+                        {{ usuario()?.nombre?.charAt(0) || '?' }}
+                    </div>
+                }
             </div>
-            }
+
+            <div class="profile-main">
+                <div class="profile-heading">
+                    <div>
+                        <h2>{{ usuario()?.username }}</h2>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="edit-profile-button"
+                        (click)="editarPerfil()"
+                    >
+                        Editar perfil
+                    </button>
+                </div>
+
+                <div class="profile-bio">
+                    {{ usuario()?.descripcion || 'Todavia no agregaste una descripcion.' }}
+                </div>
+            </div>
         </div>
 
-        <form (ngSubmit)="guardarDatos()">
-            <div class="form-row">
-                <div>
-                    <label for="nombre">Nombre</label>
-                    <input id="nombre" name="nombre" type="text" [(ngModel)]="nombre" required />
-                </div>
+        <div class="profile-divider"></div>
 
+        <div class="profile-details">
+            <div class="profile-detail">
                 <div>
-                    <label for="apellido">Apellido</label>
-                    <input id="apellido" name="apellido" type="text" [(ngModel)]="apellido" required />
+                    <span class="detail-label">Nombre y apellido</span>
+                    <p>
+                        {{ usuario()?.nombre }}
+                        {{ usuario()?.apellido }}
+                    </p>
                 </div>
             </div>
 
-            <label for="username">Nombre de usuario</label>
-            <input id="username" name="username" type="text" [(ngModel)]="username" required />
+            <div class="profile-detail">
+                <div>
+                    <span class="detail-label">Correo electronico</span>
+                    <p>{{ usuario()?.email }}</p>
+                </div>
+            </div>
 
-            <label for="email">Email</label>
-            <input id="email" name="email" type="email" [(ngModel)]="email" required />
-
-            <label for="fechaNacimiento">Fecha de nacimiento</label>
-            <input id="fechaNacimiento" name="fechaNacimiento" type="date" [(ngModel)]="fechaNacimiento" required />
-
-            <label for="descripcion">Descripcion</label>
-            <textarea id="descripcion" name="descripcion" [(ngModel)]="descripcion" maxlength="300" rows="4"></textarea>
-
-            <label for="imagenPerfil">Cambiar foto de perfil</label>
-            <input id="imagenPerfil" name="imagenPerfil" type="file" accept="image/jpeg,image/png,image/webp"
-                (change)="seleccionarImagen($event)" />
-
-            <!-- <p class="role">Rol: {{ usuario()?.rol }}</p> -->
-
-            @if (error()) {
-                <p class="error" role="alert">{{ error() }}</p>
-            }
-
-            @if (mensaje()) {
-                <p class="success" role="status">{{ mensaje() }}</p>
-            }
-
-            <button type="submit" [disabled]="guardando()">
-                {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
-            </button>
-        </form>
-    </section>
+            <div class="profile-detail">
+                <div>
+                    <span class="detail-label">Fecha de nacimiento</span>
+                    <p>
+                        @if (usuario()?.fechaNacimiento) {
+                            {{ usuario()?.fechaNacimiento | date: 'dd/MM/yyyy' }}
+                        } @else {
+                            No especificada
+                        }
+                    </p>
+                </div>
+            </div>
+        </div>
+    }
 
     <section class="my-publications">
         <h2>Mis ultimas publicaciones</h2>
@@ -88,12 +101,16 @@
                     </p>
 
                     @if (publicacion.imagen) {
-                        <img class="my-publication-image" [src]="publicacion.imagen" alt="Imagen de la publicacion" />
+                        <img
+                            class="my-publication-image"
+                            [src]="publicacion.imagen"
+                            alt="Imagen de la publicacion"
+                        />
                     }
 
                     <app-comentarios [publicacionId]="publicacion._id" />
                 </article>
             }
-        }
+        } 
     </section>
 </section>
