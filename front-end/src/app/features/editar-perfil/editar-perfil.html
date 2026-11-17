@@ -1,0 +1,152 @@
+<section class="edit-profile-container">
+    <h1>Editar perfil</h1>
+    <p class="subtitle">Modifica tus datos personales y tu foto de perfil.</p>
+
+    @if (cargando()) {
+        <p>Cargando perfil...</p>
+    } @else if (errorCarga()) {
+        <p class="error" role="alert">{{ errorCarga() }}</p>
+    } @else {
+        <section class="edit-profile-card">
+            <div class="profile-picture">
+                @if (imagenSeleccionada) {
+                    <div class="empty-avatar">
+                        {{ perfilForm.controls.nombre.value?.trim()?.charAt(0) || '?' }}
+                    </div>
+
+                    <p>{{ imagenSeleccionada.name }}</p>
+                } @else if (usuario()?.imagenPerfil) {
+                    <img [src]="usuario()?.imagenPerfil" alt="Foto de perfil actual" />
+                } @else {
+                    <div class="empty-avatar">
+                        {{ perfilForm.controls.nombre.value?.trim()?.charAt(0) || '?' }}
+                    </div>
+                }
+            </div>
+
+            <form [formGroup]="perfilForm" (ngSubmit)="guardarDatos()" novalidate>
+                <div class="form-row">
+                    <div class="form-field">
+                        <label for="nombre">Nombre</label>
+                        <input id="nombre" type="text" formControlName="nombre"
+                            [class.invalid-input]="perfilForm.controls.nombre.invalid && perfilForm.controls.nombre.touched" />
+
+                        @if (perfilForm.controls.nombre.touched && perfilForm.controls.nombre.errors) {
+                            <p class="field-error">
+                                @if (perfilForm.controls.nombre.hasError('required')) {
+                                    Ingresa tu nombre.
+                                } @else if (perfilForm.controls.nombre.hasError('soloEspacios')) {
+                                    El nombre no puede contener solamente espacios.
+                                } @else if (perfilForm.controls.nombre.hasError('minlength')) {
+                                    El nombre debe tener al menos 3 caracteres.
+                                }
+                            </p>
+                        }
+                    </div>
+
+                    <div class="form-field">
+                        <label for="apellido">Apellido</label>
+                        <input id="apellido" type="text" formControlName="apellido"
+                            [class.invalid-input]="perfilForm.controls.apellido.invalid && perfilForm.controls.apellido.touched" />
+
+                        @if (perfilForm.controls.apellido.touched && perfilForm.controls.apellido.errors) {
+                            <p class="field-error">
+                                @if (perfilForm.controls.apellido.hasError('required')) {
+                                    Ingresa tu apellido.
+                                } @else if (perfilForm.controls.apellido.hasError('soloEspacios')) {
+                                    El apellido no puede contener solamente espacios.
+                                } @else if (perfilForm.controls.apellido.hasError('minlength')) {
+                                    El apellido debe tener al menos 3 caracteres.
+                                }
+                            </p>
+                        }
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label for="username">Nombre de usuario</label>
+                    <input id="username" type="text" formControlName="username"
+                        [class.invalid-input]="perfilForm.controls.username.invalid && perfilForm.controls.username.touched" />
+
+                    @if (perfilForm.controls.username.touched && perfilForm.controls.username.errors) {
+                        <p class="field-error">
+                            @if (perfilForm.controls.username.hasError('required')) {
+                                Ingresa tu nombre de usuario.
+                            } @else if (perfilForm.controls.username.hasError('soloEspacios')) {
+                                El nombre de usuario no puede contener solamente espacios.
+                            } @else if (perfilForm.controls.username.hasError('minlength')) {
+                                El nombre de usuario debe tener al menos 3 caracteres.
+                            } @else if (perfilForm.controls.username.hasError('maxlength')) {
+                                El nombre de usuario no puede superar los 30 caracteres.
+                            }
+                        </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="email">Email</label>
+                    <input id="email" type="email" formControlName="email"
+                        [class.invalid-input]="perfilForm.controls.email.invalid && perfilForm.controls.email.touched" />
+
+                    @if (perfilForm.controls.email.touched && perfilForm.controls.email.errors) {
+                        <p class="field-error">
+                            @if (perfilForm.controls.email.hasError('required')) {
+                                Ingrese su correo electronico.
+                            } @else if (perfilForm.controls.email.hasError('email')) {
+                                Ingrese un correo electronico valido.
+                            }
+                        </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="fechaNacimiento">Fecha de nacimiento</label>
+                    <input id="fechaNacimiento" type="date" formControlName="fechaNacimiento"
+                        [class.invalid-input]="perfilForm.controls.fechaNacimiento.invalid && perfilForm.controls.fechaNacimiento.touched" />
+
+                    @if (perfilForm.controls.fechaNacimiento.touched && perfilForm.controls.fechaNacimiento.errors) {
+                        <p class="field-error">
+                            Ingrese una fecha valida.
+                        </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="descripcion">Descripcion</label>
+                    <textarea id="descripcion" formControlName="descripcion" maxlength="300" rows="4"
+                        [class.invalid-input]="perfilForm.controls.descripcion.invalid && perfilForm.controls.descripcion.touched"></textarea>
+
+                    @if (perfilForm.controls.descripcion.touched && perfilForm.controls.descripcion.hasError('maxlength')) {
+                        <p class="field-error">
+                            La descripcion no puede superar los 300 caracteres.
+                        </p>
+                    }
+                </div>
+
+                <div class="form-field">
+                    <label for="imagenPerfil">Cambiar foto de perfil</label>
+                    <input id="imagenPerfil" type="file" accept="image/jpeg,image/png,image/webp"
+                        (change)="seleccionarImagen($event)" />
+                </div>
+
+                @if (error()) {
+                    <p class="error" role="alert">{{ error() }}</p>
+                }
+
+                @if (mensaje()) {
+                    <p class="success" role="status">{{ mensaje() }}</p>
+                }
+
+                <div class="form-actions">
+                    <button type="button" class="cancel-button" (click)="cancelar()" [disabled]="guardando()">
+                        Cancelar
+                    </button>
+
+                    <button type="submit" [disabled]="guardando()">
+                        {{ guardando() ? 'Guardando...' : 'Guardar cambios' }}
+                    </button>
+                </div>
+            </form>
+        </section>
+    }
+</section>

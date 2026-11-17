@@ -21,6 +21,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/perfil/perfil').then(c => c.Perfil)
     },
     {
+        path: 'editar-perfil',
+        canActivate: [authGuard],
+        loadComponent: () => import('./features/editar-perfil/editar-perfil').then(c => c.EditarPerfil)
+    },
+    {
         path: 'login',
         loadComponent: () => import('./features/auth/login/login').then(c => c.Login)
     },

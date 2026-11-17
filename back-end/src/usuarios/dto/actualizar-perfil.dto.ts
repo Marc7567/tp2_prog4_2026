@@ -4,13 +4,13 @@ import { IsDateString, IsEmail, IsString, MaxLength, MinLength } from 'class-val
 export class ActualizarPerfilDto {
     @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
     @IsString()
-    @MinLength(1)
+    @MinLength(3)
     @MaxLength(50)
     nombre: string;
 
     @Transform(({ value }) => typeof value === 'string' ? value.trim() : value)
     @IsString()
-    @MinLength(1)
+    @MinLength(3)
     @MaxLength(50)
     apellido: string;
 
