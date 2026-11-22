@@ -7,6 +7,7 @@ import { ImagenesModule } from '../imagenes/imagenes.module.js';
 import { PerfilController } from './perfil.controller.js';
 import { PerfilService } from './perfil.service.js';
 import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { RolesGuard } from '../common/guards/roles.guard.js';
 
 @Module({
     imports: [
@@ -21,7 +22,8 @@ import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
     providers: [
         UsuariosService,
         PerfilService,
-        AuthGuard
+        AuthGuard,
+        RolesGuard
     ],
     // Permite que otros modulos utilicen UsuariosService.
     exports: [UsuariosService]

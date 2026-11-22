@@ -49,6 +49,9 @@ export class Usuario {
     @Prop({ enum: ['usuario', 'administrador'], default: 'usuario' })
     rol!: string;
 
+    @Prop({ default: true })
+    habilitado!: boolean;
+
     createdAt!: Date;
     updatedAt!: Date;
 }

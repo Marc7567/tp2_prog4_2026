@@ -19,7 +19,7 @@ interface RequestAutenticado extends Request {
 @Controller()
 export class AuthController {
     constructor(
-        private readonly autenticacionService: AuthService,
+        private readonly autenticacionService: AuthService
     ) {}
 
     // Recibe las credenciales y devuelve el token JWT junto con los datos del usuario.

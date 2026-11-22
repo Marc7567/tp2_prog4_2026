@@ -221,9 +221,11 @@ export class AuthService {
     private expirarSesion(): void {
         this.limpiarTemporizadores();
 
+        // eliminamos del localStorage el token y los datos de usuario
         localStorage.removeItem(this.key);
         localStorage.removeItem(this.usuarioKey);
 
+        // 
         this.currentUser.set(null);
         this.currentUserData.set(null);
         this.mostrarRenovacion.set(false);

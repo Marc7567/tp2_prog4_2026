@@ -4,6 +4,7 @@ import { ComentariosService } from './comentarios.service.js';
 import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { CrearComentarioDto } from './dto/crear-comentario.dto.js';
 import { EditarComentarioDto } from './dto/editar-comentario.dto.js';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id.pipe.js';
 
 interface RequestAutenticado extends Request {
     user: { sub: string };
@@ -16,7 +17,7 @@ export class ComentariosController {
 
     @Get('publicacion/:publicacionId')
     listarPorPublicacion(
-        @Param('publicacionId') publicacionId: string,
+        @Param('publicacionId', ParseMongoIdPipe) publicacionId: string,
         @Query('offset') offset = '0',
         @Query('limit') limit = '5',
     ) {
@@ -27,7 +28,7 @@ export class ComentariosController {
 
     @Post('publicacion/:publicacionId')
     crear(
-        @Param('publicacionId') publicacionId: string,
+        @Param('publicacionId', ParseMongoIdPipe) publicacionId: string,
         @Body() datos: CrearComentarioDto,
         @Req() request: RequestAutenticado,
     ) {
@@ -36,7 +37,7 @@ export class ComentariosController {
 
     @Put(':id')
     editar(
-        @Param('id') id: string,
+        @Param('id', ParseMongoIdPipe) id: string,
         @Body() datos: EditarComentarioDto,
         @Req() request: RequestAutenticado,
     ) {

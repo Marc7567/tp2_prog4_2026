@@ -5,9 +5,11 @@ import { ComentariosService } from './comentarios.service.js';
 import { Comentario, ComentarioSchema } from './schemas/comentario.schema.js';
 import { Publicacion, PublicacionSchema } from '../publicaciones/schemas/publicaciones.schema.js';
 import { Usuario, UsuarioSchema } from '../usuarios/schemas/usuario.schema.js';
+import { UsuariosModule } from '../usuarios/usuarios.module.js';
 
 @Module({
   imports: [
+    UsuariosModule,
     MongooseModule.forFeature([
       { name: Comentario.name, schema: ComentarioSchema },
       { name: Publicacion.name, schema: PublicacionSchema },

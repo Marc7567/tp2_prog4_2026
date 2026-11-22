@@ -1,5 +1,4 @@
-
-import { Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors, Delete } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -8,6 +7,11 @@ import { UsuariosService } from './usuarios.service.js';
 import { CrearUsuarioDto } from './dto/crear-usuario.dto.js';
 import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service.js';
 import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor.js';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id.pipe.js';
+import { Roles } from '../common/decorators/roles.decorator.js';
+import { RolesGuard } from '../common/guards/roles.guard.js';
+import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
+import { CrearUsuarioAdminDto } from './dto/crear-usuario-admin.dto.js';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -72,5 +76,61 @@ export class UsuariosController {
             access_token: accessToken,
             usuario
         };
+    }
+
+    // Lista todos los usuarios. Solo para administradores.
+    @Get('admin')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('administrador')
+    listarUsuarios() {
+        return this.usuariosService.listarTodos();
+    }
+
+    // Cambia el estado de una cuenta. Solo para administradores.
+    @Patch('admin/:id/habilitado')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('administrador')
+    cambiarHabilitacion(
+        @Param('id', ParseMongoIdPipe) id: string,
+        @Body() datos: { habilitado?: unknown }
+    ) {
+        if (typeof datos.habilitado !== 'boolean') {
+            throw new BadRequestException('El campo habilitado debe ser true o false');
+        }
+
+        return this.usuariosService.cambiarHabilitacion(
+            id,
+            datos.habilitado
+        );
+    }
+
+    // Alta administrativa de un usuario.
+    @Post('admin')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('administrador')
+    crearAdministrativamente(
+        @Body() datos: CrearUsuarioAdminDto,
+    ) {
+        return this.usuariosService.crear(datos);
+    }
+
+    // Baja logica de un usuario.
+    @Delete('admin/:id')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('administrador')
+    deshabilitarUsuario(
+        @Param('id', ParseMongoIdPipe) id: string,
+    ) {
+        return this.usuariosService.deshabilitarUsuario(id);
+    }
+
+    // Alta logica: rehabilita un usuario deshabilitado.
+    @Post('admin/:id/habilitar')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('administrador')
+    habilitarUsuario(
+        @Param('id', ParseMongoIdPipe) id: string,
+    ) {
+        return this.usuariosService.habilitarUsuario(id);
     }
 }
