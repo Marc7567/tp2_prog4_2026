@@ -9,6 +9,7 @@ import { ImagenesService, MAX_IMAGEN_BYTES } from '../imagenes/imagenes.service.
 import { ImagenesInterceptor } from '../imagenes/imagenes.interceptor.js';
 import { JwtService } from '@nestjs/jwt';
 import { Types } from 'mongoose';
+import { ParseMongoIdPipe } from '../common/pipes/parse-mongo-id.pipe.js';
 
 interface RequestAutenticado extends Request {
     user: { sub: string };
@@ -103,25 +104,28 @@ export class PublicacionesController {
 
     @Get(':id')
     @UseGuards(AuthGuard)
-    obtenerPorId(@Param('id') id: string, @Req() request: RequestAutenticado) {
+    obtenerPorId(
+        @Param('id', ParseMongoIdPipe) id: string,
+        @Req() request: RequestAutenticado
+    ) {
         return this.publicacionesService.obtenerPorId(id, request.user.sub);
     }
 
     @Delete(':id')
     @UseGuards(AuthGuard)
-    eliminar(@Param('id') id: string, @Req() request: RequestAutenticado) {
+    eliminar(@Param('id', ParseMongoIdPipe) id: string, @Req() request: RequestAutenticado) {
         return this.publicacionesService.eliminar(id, request.user.sub);
     }
 
     @Post(':id/me-gusta')
     @UseGuards(AuthGuard)
-    darMeGusta(@Param('id') id: string, @Req() request: RequestAutenticado) {
+    darMeGusta(@Param('id', ParseMongoIdPipe) id: string, @Req() request: RequestAutenticado) {
         return this.publicacionesService.darMeGusta(id, request.user.sub);
     }
 
     @Delete(':id/me-gusta')
     @UseGuards(AuthGuard)
-    quitarMeGusta(@Param('id') id: string, @Req() request: RequestAutenticado) {
+    quitarMeGusta(@Param('id', ParseMongoIdPipe) id: string, @Req() request: RequestAutenticado) {
         return this.publicacionesService.quitarMeGusta(id, request.user.sub);
     }
 }

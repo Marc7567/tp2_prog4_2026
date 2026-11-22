@@ -29,10 +29,14 @@ export class AuthService {
             throw new UnauthorizedException('Credenciales incorrectas');
         }
 
+        // Impide el acceso a cuentas deshabilitadas.
+        if (usuario.habilitado === false) {
+            throw new UnauthorizedException('Esta cuenta esta deshabilitada');
+        }
+
         // Compara la contrasena recibida con el hash almacenado.
         const passwordValida = await compare(
-            password,
-            usuario.password,
+            password, usuario.password
         );
 
         if (!passwordValida) {
@@ -63,6 +67,7 @@ export class AuthService {
                 descripcion: resultado.descripcion,
                 imagenPerfil: resultado.imagenPerfil,
                 rol: resultado.rol,
+                habilitado: resultado.habilitado ?? true,
                 createdAt: resultado.createdAt,
                 updatedAt: resultado.updatedAt,
             },

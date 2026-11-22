@@ -71,6 +71,7 @@ export class ComentariosService {
 
     async editar(id: string, usuarioId: string, mensaje: string) {
         this.validarId(id, 'comentarioId');
+        
         const texto = mensaje?.trim();
         if (!texto || texto.length > 1000) {
             throw new BadRequestException('El comentario debe tener entre 1 y 1000 caracteres');
@@ -82,6 +83,15 @@ export class ComentariosService {
         }
         if (comentario.autor.toString() !== usuarioId) {
             throw new ForbiddenException('Solo podes editar tus propios comentarios');
+        }
+
+        const publicacion = await this.publicacionModel.findOne({
+            _id: comentario.publicacion,
+            eliminada: false,
+        }).exec();
+
+        if (!publicacion) {
+            throw new NotFoundException('No puedes editar un comentario de una publicacion eliminada');
         }
 
         comentario.mensaje = texto;

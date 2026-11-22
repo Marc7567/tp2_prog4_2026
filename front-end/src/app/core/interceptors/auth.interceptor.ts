@@ -25,8 +25,9 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
     return next(request).pipe(
         catchError((error: unknown) => {
-            if (error instanceof HttpErrorResponse && error.status === 401 &&
-                !publica && auth.accessToken() === token) {
+            if (error instanceof HttpErrorResponse &&  error.status === 401 
+                && !publica && auth.accessToken() === token) {
+            
                 auth.signOut();
                 void router.navigate(['/login']);
             }
