@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard.js';
+import { authAdminGuard } from './core/guards/auth-admin.guard.js';
 
 export const routes: Routes = [
     {
@@ -24,6 +25,11 @@ export const routes: Routes = [
         path: 'editar-perfil',
         canActivate: [authGuard],
         loadComponent: () => import('./features/editar-perfil/editar-perfil').then(c => c.EditarPerfil)
+    },
+    {
+        path: 'dashboard/usuarios',
+        canActivate: [authGuard, authAdminGuard],
+        loadComponent: () => import('./features/dashboard/usuarios/usuarios').then(c => c.Usuarios)
     },
     {
         path: 'login',

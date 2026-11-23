@@ -1,18 +1,23 @@
 import { inject } from '@angular/core';
 import { Router, type CanActivateFn } from '@angular/router';
+import { map } from 'rxjs';
 import { AuthService } from '../services/auth.service.js';
 
-export const authGuard: CanActivateFn = (route, state) => {
+export const authGuard: CanActivateFn = () => {
     const authService = inject(AuthService);
     const router = inject(Router);
 
-    // Verificamos si hay un usuario logueado en el Signal
-    const usuario = authService.currentUser();
-
-    if (usuario) {
+    if (authService.currentUser()) {
         return true;
     }
-    
-    // Si no hay sesión, redirigimos al login
-    return router.createUrlTree(['/login']);
-};
+
+    if (!authService.accessToken()) {
+        return router.createUrlTree(['/login']);
+    }
+
+    return authService.restaurarSesion().pipe(
+        map((usuario) =>
+            usuario ? true : router.createUrlTree(['/login'])
+        )
+    );
+}

@@ -223,19 +223,25 @@ export class Home implements OnInit {
   confirmarEliminar(): void {
     const publicacion = this.publicacionPendienteEliminar();
 
-    if (!publicacion || this.eliminando() || this.accionEnCurso()) return;
+    if (!publicacion || this.eliminando() || this.accionEnCurso()) {
+      return;
+    }
 
     this.eliminando.set(true);
     this.accionEnCurso.set(publicacion._id);
     this.error.set('');
+    this.mensaje.set('');
 
     this.publicacionesService.eliminar(publicacion._id).subscribe({
       next: () => {
         this.publicacionPendienteEliminar.set(null);
         this.eliminando.set(false);
         this.accionEnCurso.set('');
+
         this.mensaje.set('La publicacion se elimino correctamente');
 
+        // Si era la ultima publicacion de la pagina,
+        // volvemos a la pagina anterior.
         if (this.publicaciones().length === 1 && this.pagina() > 0) {
           this.pagina.update((pagina) => pagina - 1);
         }
@@ -244,11 +250,13 @@ export class Home implements OnInit {
       },
       error: (error) => {
         const detalle = error?.error?.message;
+
         this.error.set(
           Array.isArray(detalle)
             ? detalle.join(', ')
             : detalle || 'No se pudo eliminar la publicacion'
         );
+
         this.eliminando.set(false);
         this.accionEnCurso.set('');
         this.publicacionPendienteEliminar.set(null);

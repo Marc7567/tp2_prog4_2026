@@ -43,11 +43,12 @@ export class Comentarios implements OnInit {
     cargarComentarios(): void {
         this.cargando = true;
         this.error = '';
+        this.mensaje = '';
 
         this.comentariosService.listar(
-            this.publicacionId,
-            0,
-            this.limite,
+            this.publicacionId, 
+            0, 
+            this.limite
         ).subscribe({
             next: (respuesta) => {
                 this.comentarios = respuesta.items;
@@ -56,12 +57,18 @@ export class Comentarios implements OnInit {
                 this.cargando = false;
                 this.cdr.markForCheck();
             },
-            error: () => {
-                this.error = 'No se pudo cargar los comentarios.';
+            error: (error) => {
+                this.error = error?.status === 404
+                    ? 'Esta publicacion ya no esta disponible.'
+                    : 'No se pudieron cargar los comentarios.';
+
+                this.comentarios = [];
+                this.total = 0;
+                this.offset = 0;
                 this.cargando = false;
                 this.cdr.markForCheck();
             }
-        });
+        })
     }
 
     cargarMas(): void {

@@ -7,7 +7,7 @@ export interface Usuario {
     fechaNacimiento: string;
     descripcion: string;
     imagenPerfil: string;
-    rol: string;
+    rol: 'usuario' | 'administrador';
     createdAt: string;
     updatedAt: string;
 }
