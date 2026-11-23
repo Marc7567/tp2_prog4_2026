@@ -39,7 +39,7 @@
                                 <strong>
                                     {{ comentario.autor?.nombre | nombreCompleto: comentario.autor?.apellido }}
                                 </strong>
-                                <span>@{{ comentario.autor?.username }}</span>
+                                <span>{{ comentario.autor?.username }}</span>
                             </div>
                         </div>
                         <time [attr.datetime]="comentario.createdAt">
