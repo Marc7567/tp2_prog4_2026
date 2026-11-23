@@ -7,11 +7,15 @@
         <a routerLink="/home" routerLinkActive="active">🏠 Publicaciones</a>
 
         @if (authService.currentUser()) {
-        <a routerLink="/perfil" routerLinkActive="active">👤 Mi perfil</a>
+            @if (authService.currentUser()?.rol === 'administrador') {
+                <a routerLink="/dashboard/usuarios" routerLinkActive="active">Lista Usuarios</a>
+                <a routerLink="/dashboard/estadisticas" routerLinkActive="active">Estadisticas</a>
+            }
+            <a routerLink="/perfil" routerLinkActive="active">👤 Mi perfil</a>
 
-        <a href="#" (click)="logout(); $event.preventDefault()">🚪 Cerrar sesion</a>
+            <a href="#" (click)="logout(); $event.preventDefault()">🚪 Cerrar sesion</a>
         } @else {
-        <a routerLink="/login" routerLinkActive="active">🔑 Iniciar sesion</a>
+            <a routerLink="/login" routerLinkActive="active">🔑 Iniciar sesion</a>
         }
     </nav>
 </header>

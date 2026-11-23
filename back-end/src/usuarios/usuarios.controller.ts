@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors, Delete } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Delete, ForbiddenException, Get, Param, Patch, Post, Req, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { memoryStorage } from 'multer';
@@ -12,6 +12,7 @@ import { Roles } from '../common/decorators/roles.decorator.js';
 import { RolesGuard } from '../common/guards/roles.guard.js';
 import { AuthGuard } from '../auth/guards/jwt-auth.guard.js';
 import { CrearUsuarioAdminDto } from './dto/crear-usuario-admin.dto.js';
+import type { Request } from 'express';
 
 @Controller('usuarios')
 export class UsuariosController {
@@ -92,10 +93,19 @@ export class UsuariosController {
     @Roles('administrador')
     cambiarHabilitacion(
         @Param('id', ParseMongoIdPipe) id: string,
-        @Body() datos: { habilitado?: unknown }
+        @Body() datos: { habilitado?: unknown },
+        @Req() request: Request & { user: { sub: string } }
     ) {
         if (typeof datos.habilitado !== 'boolean') {
-            throw new BadRequestException('El campo habilitado debe ser true o false');
+            throw new BadRequestException(
+                'El campo habilitado debe ser true o false'
+            );
+        }
+
+        if (datos.habilitado === false && request.user.sub === id) {
+            throw new ForbiddenException(
+                'No podes deshabilitar tu propia cuenta'
+            );
         }
 
         return this.usuariosService.cambiarHabilitacion(
@@ -104,14 +114,48 @@ export class UsuariosController {
         );
     }
 
-    // Alta administrativa de un usuario.
+    // Alta administrativa de un usuario, con imagen de perfil opcional.
     @Post('admin')
     @UseGuards(AuthGuard, RolesGuard)
     @Roles('administrador')
-    crearAdministrativamente(
+    @UseInterceptors(
+        ImagenesInterceptor,
+        FileInterceptor('imagenPerfil', {
+            storage: memoryStorage(),
+            limits: {
+                fileSize: MAX_IMAGEN_BYTES,
+                files: 1,
+                fields: 8,
+                parts: 9,
+                fieldSize: 4096,
+                fieldNameSize: 100,
+            },
+        }),
+    )
+    async crearAdministrativamente(
         @Body() datos: CrearUsuarioAdminDto,
+        @UploadedFile() archivo?: Express.Multer.File,
     ) {
-        return this.usuariosService.crear(datos);
+        if (!archivo) {
+            return this.usuariosService.crear(datos);
+        }
+
+        const buffer = await this.imagenesService.normalizar(archivo);
+        const subida = await this.imagenesService.subir(
+            buffer,
+            'red-social/perfiles',
+        );
+
+        try {
+            return await this.usuariosService.crear(
+                datos,
+                subida.url,
+                subida.publicId,
+            );
+        } catch (error) {
+            await this.imagenesService.eliminar(subida.publicId);
+            throw error;
+        }
     }
 
     // Baja logica de un usuario.
@@ -120,10 +164,17 @@ export class UsuariosController {
     @Roles('administrador')
     deshabilitarUsuario(
         @Param('id', ParseMongoIdPipe) id: string,
+        @Req() request: Request & { user: { sub: string } }
     ) {
+        if (request.user.sub === id) {
+            throw new ForbiddenException(
+                'No podes deshabilitar tu propia cuenta'
+            );
+        }
+
         return this.usuariosService.deshabilitarUsuario(id);
     }
-
+    
     // Alta logica: rehabilita un usuario deshabilitado.
     @Post('admin/:id/habilitar')
     @UseGuards(AuthGuard, RolesGuard)

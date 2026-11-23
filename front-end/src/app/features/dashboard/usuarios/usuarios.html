@@ -1,0 +1,259 @@
+<section class="dashboard">
+    <header class="dashboard-header">
+        <div>
+            <h1>Administracion de usuarios</h1>
+            <p>Gestiona las cuentas y sus permisos.</p>
+        </div>
+    </header>
+
+    @if (mensaje()) {
+        <div class="mensaje mensaje-exito" role="status">
+            {{ mensaje() }}
+        </div>
+    }
+
+    @if (error()) {
+        <div class="mensaje mensaje-error" role="alert">
+            {{ error() }}
+        </div>
+    }
+
+    <section class="panel">
+        <h2>Crear usuario</h2>
+
+        <form (ngSubmit)="crearUsuario()" #formUsuario="ngForm">
+            <div class="form-grid">
+                <label>
+                    Nombre
+                    <input
+                        type="text"
+                        name="nombre"
+                        [(ngModel)]="formulario.nombre"
+                        required
+                        minlength="3"
+                        maxlength="50"
+                    />
+                </label>
+
+                <label>
+                    Apellido
+                    <input
+                        type="text"
+                        name="apellido"
+                        [(ngModel)]="formulario.apellido"
+                        required
+                        minlength="3"
+                        maxlength="50"
+                    />
+                </label>
+
+                <label>
+                    Nombre de usuario
+                    <input
+                        type="text"
+                        name="username"
+                        [(ngModel)]="formulario.username"
+                        required
+                        minlength="3"
+                        maxlength="30"
+                        pattern="[a-zA-Z0-9_]+"
+                    />
+                </label>
+
+                <label>
+                    Correo electronico
+                    <input
+                        type="email"
+                        name="email"
+                        [(ngModel)]="formulario.email"
+                        required
+                        email
+                    />
+                </label>
+
+                <label>
+                    Contrasena
+                    <input
+                        type="password"
+                        name="password"
+                        [(ngModel)]="formulario.password"
+                        required
+                        minlength="8"
+                        maxlength="72"
+                        pattern="(?=.*[A-Z])(?=.*[0-9]).+"
+                        autocomplete="new-password"
+                    />
+                    @if (formulario.password && formUsuario.controls['password']?.invalid) {
+                        <small class="mensaje-error">
+                            Minimo 8 caracteres, una mayuscula y un numero.
+                        </small>
+                    }
+                </label>
+
+                <label>
+                    Repetir contrasena
+                    <input
+                        type="password"
+                        name="repetirPassword"
+                        [(ngModel)]="repetirPassword"
+                        required
+                        autocomplete="new-password"
+                    />
+
+                    @if (repetirPassword && !contrasenasCoinciden()) {
+                        <small class="error-msg">
+                            Las contrasenas no coinciden.
+                        </small>
+                    }
+                </label>
+
+                <label>
+                    Fecha de nacimiento
+                    <input
+                        type="date"
+                        name="fechaNacimiento"
+                        [(ngModel)]="formulario.fechaNacimiento"
+                        required
+                    />
+                </label>
+
+                <label class="campo-completo">
+                    Descripcion
+                    <textarea
+                        name="descripcion"
+                        [(ngModel)]="formulario.descripcion"
+                        rows="3"
+                        maxlength="300"
+                    ></textarea>
+                </label>
+
+                <label class="campo-completo">
+                    Imagen de perfil (opcional)
+                    <input
+                        #inputImagen
+                        type="file"
+                        name="imagenPerfil"
+                        accept="image/*"
+                        (change)="seleccionarImagen($event)"
+                    />
+
+                    @if (nombreImagen()) {
+                        <small>{{ nombreImagen() }}</small>
+                    }
+                </label>
+            </div>
+
+            <fieldset class="roles">
+                <legend>Rol del usuario</legend>
+
+                <label class="opcion-rol">
+                    <input
+                        type="radio"
+                        name="rol"
+                        [(ngModel)]="formulario.rol"
+                        value="usuario"
+                        required
+                    />
+                    Usuario
+                </label>
+
+                <label class="opcion-rol">
+                    <input
+                        type="radio"
+                        name="rol"
+                        [(ngModel)]="formulario.rol"
+                        value="administrador"
+                        required
+                    />
+                    Administrador
+                </label>
+            </fieldset>
+
+            <button
+                type="submit"
+                class="btn-primary"
+                [disabled]="
+                    guardando() ||
+                    formUsuario.invalid ||
+                    !contrasenasCoinciden()
+                "
+            >
+                {{ guardando() ? 'Creando...' : 'Crear usuario' }}
+            </button>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="panel-header">
+            <h2>Usuarios registrados</h2>
+            <span class="contador">{{ usuarios().length }} usuarios</span>
+        </div>
+
+        @if (cargando()) {
+            <p class="estado">Cargando usuarios...</p>
+        } @else if (usuarios().length === 0) {
+            <p class="estado">No hay usuarios para mostrar.</p>
+        } @else {
+            <div class="tabla-contenedor">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Usuario</th>
+                            <th>Correo</th>
+                            <th>Rol</th>
+                            <th>Estado</th>
+                            <th>Accion</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for (usuario of usuarios(); track usuario._id) {
+                            <tr>
+                                <td>
+                                    <div class="usuario-info">
+                                        <strong>
+                                            {{ usuario.nombre }} {{ usuario.apellido }}
+                                        </strong>
+                                        <span>{{ usuario.username }}</span>
+                                    </div>
+                                </td>
+
+                                <td>{{ usuario.email }}</td>
+
+                                <td>
+                                    <span
+                                        class="etiqueta-rol"
+                                        [class.rol-admin]="usuario.rol === 'administrador'"
+                                    >
+                                        {{ usuario.rol }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <span
+                                        class="etiqueta-estado"
+                                        [class.estado-activo]="usuario.habilitado"
+                                        [class.estado-inactivo]="!usuario.habilitado"
+                                    >
+                                        {{ usuario.habilitado ? 'Habilitado' : 'Deshabilitado' }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <button
+                                        type="button"
+                                        [class.btn-danger]="usuario.habilitado"
+                                        [class.btn-secondary]="!usuario.habilitado"
+                                        (click)="cambiarEstado(usuario)"
+                                    >
+                                        {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+    </section>
+</section>

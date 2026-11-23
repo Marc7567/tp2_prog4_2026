@@ -1,7 +1,7 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, catchError, finalize, map, of, tap, timer } from 'rxjs';
+import { Observable, catchError, finalize, map, of, shareReplay, tap, timer } from 'rxjs';
 import { environment } from '../../../environments/environment.js';
 import { Usuario } from '../models/usuario.interface.js';
 
@@ -20,7 +20,7 @@ export class AuthService {
 
     private url = environment.apiUrl;
     private key = 'access_token';
-    private usuarioKey = 'usuario';
+    private restauracionEnCurso?: Observable<Usuario | null>;
 
     private temporizadorModal?: ReturnType<typeof setTimeout>;
     private temporizadorExpiracion?: ReturnType<typeof setTimeout>;
@@ -34,8 +34,8 @@ export class AuthService {
 
     cargandoInicio = signal(true);
 
-    currentUser = signal<Usuario | null>(this.obtenerUsuarioGuardado());
-    currentUserData = signal<Usuario | null>(this.obtenerUsuarioGuardado());
+    currentUser = signal<Usuario | null>(null);
+    currentUserData = signal<Usuario | null>(null);
 
     accessToken(): string | null {
         return localStorage.getItem(this.key);
@@ -74,7 +74,6 @@ export class AuthService {
 
     iniciarSesion(token: string, usuario: Usuario) {
         localStorage.setItem(this.key, token);
-        localStorage.setItem(this.usuarioKey, JSON.stringify(usuario));
 
         this.currentUser.set(usuario);
         this.currentUserData.set(usuario);
@@ -83,52 +82,59 @@ export class AuthService {
 
         return of(usuario);
     }
+
     restaurarSesion(): Observable<Usuario | null> {
+        const usuarioActual = this.currentUser();
+
+        if (usuarioActual) {
+            this.cargandoInicio.set(false);
+            return of(usuarioActual);
+        }
+
         const token = this.accessToken();
 
         if (!token) {
             this.signOut();
-
-            return timer(3000).pipe(
-                map(() => null),
-                tap(() => this.cargandoInicio.set(false))
-            );
+            this.cargandoInicio.set(false);
+            return of(null);
         }
 
-        return this.http
-            .post<{autorizado: boolean; usuario: Usuario}>(
-                this.url + '/auth/autorizar', {}
+        if (this.restauracionEnCurso) {
+            return this.restauracionEnCurso;
+        }
+
+        this.cargandoInicio.set(true);
+
+        this.restauracionEnCurso = this.http
+            .post<{ autorizado: boolean; usuario: Usuario }>(
+                this.url + '/auth/autorizar',
+                {}
             )
             .pipe(
-                tap((respuesta) => {
+                map((respuesta) => {
                     if (!respuesta.autorizado || !respuesta.usuario) {
                         this.signOut();
-                        return;
+                        return null;
                     }
 
-                    const usuario = respuesta.usuario;
-
-                    localStorage.setItem(
-                        this.usuarioKey,
-                        JSON.stringify(usuario)
-                    );
-
-                    this.currentUser.set(usuario);
-                    this.currentUserData.set(usuario);
-
+                    this.currentUser.set(respuesta.usuario);
+                    this.currentUserData.set(respuesta.usuario);
                     this.iniciarTemporizador(token);
+
+                    return respuesta.usuario;
                 }),
-                map((respuesta) => respuesta.autorizado ? respuesta.usuario : null),
                 catchError(() => {
                     this.signOut();
                     return of(null);
                 }),
                 finalize(() => {
-                    timer(2000).subscribe(() => {
-                        this.cargandoInicio.set(false);
-                    });
-                })
+                    this.cargandoInicio.set(false);
+                    this.restauracionEnCurso = undefined;
+                }),
+                shareReplay(1)
             );
+
+        return this.restauracionEnCurso;
     }
 
     renovarSesion(): Observable<{ access_token: string } | null> {
@@ -153,17 +159,14 @@ export class AuthService {
     }
 
     actualizarUsuario(usuario: Usuario): void {
-        localStorage.setItem(this.usuarioKey, JSON.stringify(usuario));
-
         this.currentUser.set(usuario);
         this.currentUserData.set(usuario);
     }
-
+    
     signOut(): void {
         this.limpiarTemporizadores();
 
         localStorage.removeItem(this.key);
-        localStorage.removeItem(this.usuarioKey);
 
         this.currentUser.set(null);
         this.currentUserData.set(null);
@@ -221,9 +224,8 @@ export class AuthService {
     private expirarSesion(): void {
         this.limpiarTemporizadores();
 
-        // eliminamos del localStorage el token y los datos de usuario
+        // eliminamos del localStorage el token
         localStorage.removeItem(this.key);
-        localStorage.removeItem(this.usuarioKey);
 
         // 
         this.currentUser.set(null);
@@ -251,21 +253,6 @@ export class AuthService {
         if (this.temporizadorRedireccion) {
             clearTimeout(this.temporizadorRedireccion);
             this.temporizadorRedireccion = undefined;
-        }
-    }
-
-    private obtenerUsuarioGuardado(): Usuario | null {
-        const usuario = localStorage.getItem(this.usuarioKey);
-
-        if (!usuario) {
-            return null;
-        }
-
-        try {
-            return JSON.parse(usuario) as Usuario;
-        } catch {
-            localStorage.removeItem(this.usuarioKey);
-            return null;
         }
     }
 }
