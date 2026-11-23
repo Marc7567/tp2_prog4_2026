@@ -1,15 +1,25 @@
 import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { AuthService } from '../../core/services/auth.service.js';
 import { Publicacion } from '../../core/models/publicacion.interface.js';
 import { Usuario } from '../../core/models/usuario.interface.js';
 import { RouterLink } from '@angular/router';
 import { Comentarios } from '../comentarios/comentarios.js';
+import { NombreCompletoPipe } from '../../shared/pipes/nombre-completo.pipe.js';
+import { InicialesPipe } from '../../shared/pipes/iniciales.pipe.js';
+import { TiempoTranscurridoPipe } from '../../shared/pipes/tiempo-transcurrido.pipe.js';
+import { ConfirmarAccionDirective } from '../../shared/directives/confirmar-accion.directive.js';
 
 @Component({
     selector: 'app-publicacion-detail',
     standalone: true,
-    imports: [DatePipe, Comentarios, RouterLink],
+    imports: [ 
+        Comentarios, 
+        RouterLink,
+        NombreCompletoPipe,
+        InicialesPipe,
+        TiempoTranscurridoPipe,
+        ConfirmarAccionDirective
+    ],
     templateUrl: './publicacion-detail.html',
     styleUrl: './publicacion-detail.css',
 })

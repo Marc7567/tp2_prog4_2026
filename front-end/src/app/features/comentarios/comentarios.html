@@ -24,21 +24,38 @@
                     <div class="comment-header">
                         <div class="comment-author">
                             @if (comentario.autor?.imagenPerfil) {
-                                <img class="comment-avatar" [src]="comentario.autor.imagenPerfil" alt="Foto de perfil" />
+                                <img
+                                    class="comment-avatar"
+                                    [src]="comentario.autor.imagenPerfil"
+                                    alt="Foto de perfil"
+                                />
                             } @else {
-                                <div class="comment-avatar-placeholder">{{ comentario.autor?.nombre?.charAt(0) || '?' }}</div>
+                                <div class="comment-avatar-placeholder">
+                                    {{ comentario.autor?.nombre | iniciales: comentario.autor?.apellido }}
+                                </div>
                             }
+
                             <div class="comment-author-info">
-                                <strong>{{ comentario.autor?.nombre }} {{ comentario.autor?.apellido }}</strong>
+                                <strong>
+                                    {{ comentario.autor?.nombre | nombreCompleto: comentario.autor?.apellido }}
+                                </strong>
                                 <span>@{{ comentario.autor?.username }}</span>
                             </div>
                         </div>
-                        <time>{{ comentario.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
+                        <time [attr.datetime]="comentario.createdAt">
+                            {{ comentario.createdAt | tiempoTranscurrido }}
+                        </time>
                     </div>
 
                     @if (comentarioEditando === comentario._id) {
                         <form class="edit-form" (ngSubmit)="guardarEdicion(comentario)">
-                            <textarea name="textoEdicion" [(ngModel)]="textoEdicion" maxlength="300" required></textarea>
+                            <textarea
+                                appAutoFocus
+                                name="textoEdicion"
+                                [(ngModel)]="textoEdicion"
+                                maxlength="300"
+                                required
+                            ></textarea>
                             <button type="submit" [disabled]="!textoEdicion.trim()">Guardar</button>
                             <button type="button" class="secondary-button" (click)="cancelarEdicion()">Cancelar</button>
                         </form>

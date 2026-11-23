@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service.js';
+import { RoleDirective } from '../../shared/directives/role.directive.js';
 
 @Component({
   selector: 'app-header',
-  imports: [RouterLink, RouterLinkActive],
+  standalone: true,
+  imports: [RouterLink, RouterLinkActive, RoleDirective],
   templateUrl: './header.html',
-  styleUrl: './header.css',
+  styleUrl: './header.css'
 })
 
 export class Header {
