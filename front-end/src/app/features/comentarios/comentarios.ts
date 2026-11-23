@@ -1,14 +1,23 @@
 import { Component, Input, OnInit, inject, ChangeDetectorRef } from '@angular/core';
-import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ComentariosService } from '../../core/services/comentarios.service.js';
 import { Comentario } from '../../core/models/comentario.interface.js';
 import { AuthService } from '../../core/services/auth.service.js';
+import { NombreCompletoPipe } from '../../shared/pipes/nombre-completo.pipe.js';
+import { InicialesPipe } from '../../shared/pipes/iniciales.pipe.js';
+import { TiempoTranscurridoPipe } from '../../shared/pipes/tiempo-transcurrido.pipe.js';
+import { AutoFocusDirective } from '../../shared/directives/auto-focus.directive.js';
 
 @Component({
     selector: 'app-comentarios',
     standalone: true,
-    imports: [DatePipe, FormsModule],
+    imports: [
+        FormsModule,
+        NombreCompletoPipe,
+        InicialesPipe,
+        TiempoTranscurridoPipe,
+        AutoFocusDirective
+    ],
     templateUrl: './comentarios.html',
     styleUrl: './comentarios.css',
 })
