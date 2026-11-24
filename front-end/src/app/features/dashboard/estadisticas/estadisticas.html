@@ -1,1 +1,287 @@
-<p>estadisticas works!</p>
+<section class="estadisticas-container">
+    <header class="encabezado">
+        <div>
+            <h1>Estadisticas</h1>
+            <p class="descripcion">
+                Consulta la actividad de publicaciones y comentarios.
+            </p>
+        </div>
+    </header>
+
+    <!-- formulario -->
+    <form class="filtros" (ngSubmit)="cargarEstadisticas()" novalidate>
+        <div class="campo-fecha">
+            <label for="desde">Desde</label>
+
+            <input
+                id="desde"
+                name="desde"
+                type="date"
+                [(ngModel)]="desde"
+                [max]="fechaMaximaDesde"
+                [class.input-error]="!!errorDesde"
+                [attr.aria-invalid]="!!errorDesde"
+                [attr.aria-describedby]="errorDesde ? 'error-desde' : null"
+                (ngModelChange)="validarFechasAlCambiar()"
+                required
+            />
+
+            @if (errorDesde) {
+                <p class="error-validacion" id="error-desde" role="alert">
+                    {{ errorDesde }}
+                </p>
+            }
+        </div>
+
+        <div class="campo-fecha">
+            <label for="hasta">Hasta</label>
+
+            <input
+                id="hasta"
+                name="hasta"
+                type="date"
+                [(ngModel)]="hasta"
+                [min]="fechaMinimaHasta || undefined"
+                [max]="fechaMaxima"
+                [class.input-error]="!!errorHasta"
+                [attr.aria-invalid]="!!errorHasta"
+                [attr.aria-describedby]="errorHasta ? 'error-hasta' : null"
+                (ngModelChange)="validarFechasAlCambiar()"
+                required
+            />
+
+            @if (errorHasta) {
+                <p class="error-validacion" id="error-hasta" role="alert">
+                    {{ errorHasta }}
+                </p>
+            }
+        </div>
+
+        <button type="submit" class="boton-aplicar" [disabled]="cargando">
+            {{ cargando ? 'Cargando...' : 'Aplicar filtros' }}
+        </button>
+
+        @if (errorGeneral) {
+            <p class="error-mensaje">{{ errorGeneral }}</p>
+        }
+    </form>
+
+    @if (cargando) {
+        <div class="estado-carga" role="status">
+            <span class="spinner"></span>
+            <p>Cargando estadisticas...</p>
+        </div>
+    }
+
+    @if (error && !filtrosInvalidos && !cargando) {
+        <div class="mensaje mensaje-error" role="alert">
+            <div>
+                <strong>No pudimos cargar las estadisticas</strong>
+                <p>{{ error }}</p>
+            </div>
+            <button type="button" class="boton-reintentar" (click)="reintentar()">
+                Reintentar
+            </button>
+        </div>
+    }
+
+    @if (consultado && !cargando && !error) {
+        <div class="resumen">
+            <article class="tarjeta-resumen">
+                <div class="resumen-icono icono-azul" aria-hidden="true">▤</div>
+                <div>
+                    <p>Publicaciones creadas</p>
+                    <strong>{{ publicaciones.length }}</strong>
+                    <span>Usuarios con publicaciones creadas en el periodo</span>
+                </div>
+            </article>
+
+            <article class="tarjeta-resumen">
+                <div class="resumen-icono icono-verde" aria-hidden="true">↗</div>
+                <div>
+                    <p>Total de comentarios</p>
+                    <strong>{{ totalComentarios }}</strong>
+                    <span>Comentarios durante el periodo</span>
+                </div>
+            </article>
+
+            <article class="tarjeta-resumen">
+                <div class="resumen-icono icono-naranja" aria-hidden="true">◉</div>
+                <div>
+                    <p>Publicaciones comentadas</p>
+                    <strong>{{ comentariosPublicaciones.length }}</strong>
+                    <span>Publicaciones con comentarios en el periodo</span>
+                </div>
+            </article>
+        </div>
+
+        <div class="graficos-grid">
+            <article class="tarjeta-grafico grafico-barras">
+                <header class="grafico-encabezado">
+                    <div>
+                        <h2>Publicaciones por usuario</h2>
+                        <p>Cantidad de publicaciones creadas por usuario</p>
+                    </div>
+                </header>
+
+                @if (publicaciones.length > 0) {
+                    <div class="barras-lista">
+                        @for (usuario of publicaciones; track usuario.usuarioId) {
+                            <div class="barra-item">
+                                <div class="barra-detalle">
+                                    <span class="barra-nombre" [title]="nombreUsuario(usuario)">
+                                        {{ nombreUsuario(usuario) }}
+                                    </span>
+                                    <strong>{{ usuario.cantidad }}</strong>
+                                </div>
+                                <div
+                                    class="barra-fondo"
+                                    role="progressbar"
+                                    [attr.aria-label]="'Publicaciones de ' + nombreUsuario(usuario)"
+                                    [attr.aria-valuenow]="usuario.cantidad"
+                                    aria-valuemin="0"
+                                    [attr.aria-valuemax]="maxPublicaciones"
+                                >
+                                    <div
+                                        class="barra-valor"
+                                        [style.width.%]="(usuario.cantidad / maxPublicaciones) * 100"
+                                    ></div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                } @else {
+                    <div class="sin-datos">
+                        <span aria-hidden="true">▤</span>
+                        <strong>Sin publicaciones</strong>
+                        <p>No hay publicaciones en este periodo.</p>
+                    </div>
+                }
+            </article>
+
+            <article class="tarjeta-grafico grafico-lineas">
+                <header class="grafico-encabezado">
+                    <div>
+                        <h2>Comentarios por dia</h2>
+                        <p>Evolucion de los comentarios a lo largo del tiempo</p>
+                    </div>
+                </header>
+
+                @if (comentariosDiarios.length > 0) {
+                    <div class="grafico-linea-contenedor">
+                        <div class="leyenda-linea">
+                            <span class="punto-leyenda"></span>
+                            Comentarios
+                        </div>
+
+                        <svg
+                            class="grafico-linea-svg"
+                            viewBox="0 0 600 220"
+                            role="img"
+                            aria-label="Grafico de comentarios por dia"
+                            preserveAspectRatio="xMidYMid meet"
+                        >
+                            @for (nivel of [0, 1, 2, 3, 4]; track nivel) {
+                                <line
+                                    x1="30"
+                                    [attr.y1]="185 - (nivel / 4) * 145"
+                                    x2="570"
+                                    [attr.y2]="185 - (nivel / 4) * 145"
+                                    class="linea-guia"
+                                />
+                                <text
+                                    x="22"
+                                    [attr.y]="189 - (nivel / 4) * 145"
+                                    class="etiqueta-eje"
+                                    text-anchor="end"
+                                >{{ (maxComentariosDia * nivel / 4) | number:'1.0-0' }}</text>
+                            }
+
+                            <polyline
+                                [attr.points]="coordenadasLinea"
+                                class="linea-datos"
+                            />
+
+                            @for (punto of puntosLinea; track punto.fecha) {
+                                <circle
+                                    [attr.cx]="punto.x"
+                                    [attr.cy]="punto.y"
+                                    r="4"
+                                    class="punto-dato"
+                                >
+                                    <title>{{ fechaCorta(punto.fecha) }}: {{ punto.cantidad }} comentarios</title>
+                                </circle>
+                            }
+                        </svg>
+
+                        <div class="fechas-eje">
+                            <span>{{ fechaCorta(comentariosDiarios[0].fecha) }}</span>
+                            <span>{{ fechaMediaComentarios }}</span>
+                            <span>{{ fechaCorta(comentariosDiarios[comentariosDiarios.length - 1].fecha) }}</span>
+                        </div>
+                    </div>
+                } @else {
+                    <div class="sin-datos">
+                        <span aria-hidden="true">↗</span>
+                        <strong>Sin comentarios</strong>
+                        <p>No hay comentarios en este periodo.</p>
+                    </div>
+                }
+            </article>
+
+            <article class="tarjeta-grafico grafico-dona">
+                <header class="grafico-encabezado">
+                    <div>
+                        <h2>Comentarios por publicacion</h2>
+                        <p>Distribucion de comentarios entre publicaciones</p>
+                    </div>
+                </header>
+
+                @if (comentariosPublicaciones.length > 0) {
+                    <div class="dona-contenido">
+                        <div
+                            class="dona"
+                            [style.background]="gradienteDona"
+                            role="img"
+                            [attr.aria-label]="'Distribucion de ' + totalComentariosPorPublicacion + ' comentarios entre publicaciones'"
+                        >
+                            <div class="dona-centro">
+                                <strong>{{ totalComentariosPorPublicacion }}</strong>
+                                <span>Comentarios</span>
+                            </div>
+                        </div>
+
+                        <div class="dona-leyenda">
+                            @for (publicacion of comentariosPublicaciones; track publicacion.publicacionId; let i = $index) {
+                                <div class="leyenda-item">
+                                    <span
+                                        class="leyenda-color"
+                                        [style.background]="colorDona(i)"
+                                    ></span>
+                                    <div class="leyenda-texto">
+                                        <span class="leyenda-titulo" [title]="publicacion.titulo">
+                                            {{ publicacion.titulo }}
+                                        </span>
+                                        <small>{{ porcentajeComentarios(publicacion.cantidad) }}%</small>
+                                    </div>
+                                    <strong>{{ publicacion.cantidad }}</strong>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                } @else {
+                    <div class="sin-datos">
+                        <span aria-hidden="true">◉</span>
+                        <strong>Sin comentarios</strong>
+                        <p>No hay comentarios asociados a publicaciones en este periodo.</p>
+                    </div>
+                }
+            </article>
+        </div>
+
+        <p class="nota-periodo">
+            Periodo consultado: {{ desde }} al {{ hasta }}.
+            Solo se consideran publicaciones no eliminadas.
+        </p>
+    }
+</section>

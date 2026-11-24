@@ -32,6 +32,11 @@ export const routes: Routes = [
         loadComponent: () => import('./features/dashboard/usuarios/usuarios').then(c => c.Usuarios)
     },
     {
+        path: 'dashboard/estadisticas',
+        canActivate: [authGuard, authAdminGuard],
+        loadComponent: () => import('./features/dashboard/estadisticas/estadisticas.js').then(c => c.Estadisticas)
+    },
+    {
         path: 'login',
         loadComponent: () => import('./features/auth/login/login').then(c => c.Login)
     },
