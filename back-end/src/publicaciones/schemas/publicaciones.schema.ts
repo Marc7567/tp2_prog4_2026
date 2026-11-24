@@ -3,7 +3,7 @@ import type { HydratedDocument, Types } from 'mongoose';
 import { Schema as MongooseSchema } from 'mongoose';
 
 // Define la estructura de las publicaciones y sus fechas automaticas.
-@Schema({ timestamps: true })
+@Schema({ timestamps: true, collection: 'publicacions' })
 export class Publicacion {
     @Prop({ required: true, trim: true, maxlength: 100 })
     titulo!: string;
