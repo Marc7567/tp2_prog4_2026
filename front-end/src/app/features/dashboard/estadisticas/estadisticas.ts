@@ -270,7 +270,7 @@ export class Estadisticas implements OnInit {
     const hoy = this.fechaMaxima;
 
     if (!this.desde) {
-      this.errorDesde = 'Seleccione una fecha de inicio.';
+      this.errorDesde = 'Selecione una fecha de inicio.';
     } else if (!this.fechaValida(this.desde)) {
       this.errorDesde = 'Ingrese una fecha valida.';
     } else if (this.desde > hoy) {

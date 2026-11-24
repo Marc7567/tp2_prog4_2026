@@ -2,6 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild, inject, signal } from '@angul
 import { FormsModule } from '@angular/forms';
 import { UsuariosService } from '../../../core/services/usuarios.service.js';
 import type { CrearUsuarioAdmin, UsuarioAdmin } from '../../../core/models/usuarios-admin.interface.js';
+import { AuthService } from '../../../core/services/auth.service.js';
 
 @Component({
   selector: 'app-usuarios',
@@ -12,6 +13,10 @@ import type { CrearUsuarioAdmin, UsuarioAdmin } from '../../../core/models/usuar
 
 export class Usuarios implements OnInit {
   private usuariosService = inject(UsuariosService);
+  private authService = inject(AuthService);
+
+  usuarioSeleccionado = signal<UsuarioAdmin | null>(null);
+  cambiandoEstado = signal(false);
 
   @ViewChild('inputImagen')
   inputImagen?: ElementRef<HTMLInputElement>;
@@ -174,5 +179,75 @@ export class Usuarios implements OnInit {
         );
       }
     })
+  }
+
+  esMiCuenta(usuario: UsuarioAdmin): boolean {
+    const actual = this.authService.currentUser() ?? this.authService.currentUserData();
+
+    if (!actual) {
+      return false;
+    }
+
+    const datosActuales = actual as unknown as {
+      id?: string;
+      _id?: string;
+    };
+
+    return (datosActuales.id === usuario._id || datosActuales._id === usuario._id);
+  }
+
+  Confirmacion(usuario: UsuarioAdmin): void {
+    if (this.esMiCuenta(usuario) || this.cambiandoEstado()) {
+      return;
+    }
+
+    this.error.set('');
+    this.mensaje.set('');
+    this.usuarioSeleccionado.set(usuario);
+  }
+
+  cancelarConfirmacion(): void {
+    if (this.cambiandoEstado()) {
+      return;
+    }
+
+    this.usuarioSeleccionado.set(null);
+  }
+
+  confirmarCambioEstado(): void {
+    const usuario = this.usuarioSeleccionado();
+
+    if (!usuario || this.esMiCuenta(usuario) || this.cambiandoEstado()) {
+      return;
+    }
+
+    this.cambiandoEstado.set(true);
+    this.usuarioSeleccionado.set(null);
+
+    const deshabilitar = usuario.habilitado;
+
+    const peticion = deshabilitar
+      ? this.usuariosService.deshabilitarUsuario(usuario._id)
+      : this.usuariosService.habilitarUsuario(usuario._id);
+
+    peticion.subscribe({
+      next: () => {
+        this.mensaje.set(
+          deshabilitar
+            ? 'Usuario deshabilitado correctamente.'
+            : 'Usuario habilitado correctamente.'
+        );
+
+        this.cambiandoEstado.set(false);
+        this.cargarUsuarios();
+      },
+      error: (err) => {
+        this.error.set(
+          err.error?.message ?? 'No se pudo cambiar el estado del usuario.'
+        );
+
+        this.cambiandoEstado.set(false);
+      }
+    });
   }
 }

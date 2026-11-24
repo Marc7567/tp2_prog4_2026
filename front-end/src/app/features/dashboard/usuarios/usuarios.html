@@ -211,15 +211,15 @@
                             <tr>
                                 <td>
                                     <div class="usuario-info">
-                                        <strong>
-                                            {{ usuario.nombre }} {{ usuario.apellido }}
-                                        </strong>
+                                        <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
                                         <span>{{ usuario.username }}</span>
+
+                                        @if (esMiCuenta(usuario)) {
+                                            <span class="etiqueta-propia">Tu cuenta</span>
+                                        }
                                     </div>
                                 </td>
-
                                 <td>{{ usuario.email }}</td>
-
                                 <td>
                                     <span
                                         class="etiqueta-rol"
@@ -244,9 +244,17 @@
                                         type="button"
                                         [class.btn-danger]="usuario.habilitado"
                                         [class.btn-secondary]="!usuario.habilitado"
-                                        (click)="cambiarEstado(usuario)"
+                                        [disabled]="esMiCuenta(usuario) || cambiandoEstado()"
+                                        [title]="esMiCuenta(usuario)
+                                            ? 'No podes cambiar el estado de tu propia cuenta'
+                                            : ''"
+                                        (click)="Confirmacion(usuario)"
                                     >
-                                        {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+                                        @if (esMiCuenta(usuario)) {
+                                            Tu cuenta
+                                        } @else {
+                                            {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+                                        }
                                     </button>
                                 </td>
                             </tr>
@@ -257,3 +265,54 @@
         }
     </section>
 </section>
+
+<!-- modales -->
+@if (usuarioSeleccionado(); as usuario) {
+    <div
+        class="modal-overlay"
+        (click)="cancelarConfirmacion()"
+    >
+        <section
+            class="modal-confirmacion"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-confirmacion"
+            (click)="$event.stopPropagation()"
+        >
+            <h2 id="titulo-confirmacion">
+                {{ usuario.habilitado
+                    ? 'Deshabilitar usuario'
+                    : 'Habilitar usuario' }}
+            </h2>
+
+            <p>
+                ¿Estas seguro de que queres
+                {{ usuario.habilitado ? 'Deshabilitar' : 'Habilitar' }}
+                la cuenta de
+                <strong>{{ usuario.nombre }} {{ usuario.apellido }}</strong>
+                ({{ usuario.username }})?
+            </p>
+
+            <div class="modal-acciones">
+                <button
+                    type="button"
+                    class="btn-cancelar"
+                    [disabled]="cambiandoEstado()"
+                    (click)="cancelarConfirmacion()"
+                >
+                    Cancelar
+                </button>
+
+                <button
+                    type="button"
+                    [class.btn-danger]="usuario.habilitado"
+                    [class.btn-primary]="!usuario.habilitado"
+                    [disabled]="cambiandoEstado()"
+                    (click)="confirmarCambioEstado()"
+                >
+                    {{ usuario.habilitado ? 'deshabilitar' : 'habilitar' }}
+                </button>
+            </div>
+        </section>
+    </div>
+}
