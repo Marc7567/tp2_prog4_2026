@@ -26,8 +26,7 @@ export class AuthService {
     private temporizadorExpiracion?: ReturnType<typeof setTimeout>;
     private temporizadorRedireccion?: ReturnType<typeof setTimeout>;
 
-    private readonly tresMinutos = 3 * 60 * 1000;
-    private readonly cincoMinutos = 5 * 60 * 1000;
+    private readonly unMinuto = 60 * 1000;
 
     mostrarRenovacion = signal(false);
     mostrarExpiracion = signal(false);
@@ -145,6 +144,7 @@ export class AuthService {
             void this.router.navigate(['/login']);
             return of(null);
         }
+
         return this.http
             .post<{ access_token: string }>(
                 this.url + '/auth/refrescar',
@@ -185,15 +185,17 @@ export class AuthService {
             return;
         }
 
-        const tiempoHastaModal = Math.max(0,
-            tiempoRestante - this.tresMinutos
+        // Mostrar el modal cuando falte un minuto.
+        const tiempoHastaModal = Math.max(
+            0,
+            tiempoRestante - this.unMinuto
         );
 
         this.temporizadorModal = setTimeout(() => {
             this.mostrarRenovacion.set(true);
-            }, tiempoHastaModal
-        );
+        }, tiempoHastaModal);
 
+        // Expirar la sesion cuando venza el JWT.
         this.temporizadorExpiracion = setTimeout(() => {
             this.expirarSesion();
         }, tiempoRestante);
@@ -204,7 +206,7 @@ export class AuthService {
             const parte = token.split('.')[1];
 
             if (!parte) {
-                return this.cincoMinutos;
+                return 0;
             }
 
             const payload = JSON.parse(
@@ -212,12 +214,12 @@ export class AuthService {
             ) as { exp?: number };
 
             if (typeof payload.exp !== 'number') {
-                return this.cincoMinutos;
+                return 0;
             }
 
             return payload.exp * 1000 - Date.now();
         } catch {
-            return this.cincoMinutos;
+            return 0;
         }
     }
 
