@@ -43,6 +43,10 @@ export class PublicacionPage implements OnInit {
     });
   }
 
+  volverApublicaciones(): void {
+    void this.router.navigate(['/home']);
+  }
+
   alternarMeGusta(): void {
     const publicacion = this.publicacion();
 

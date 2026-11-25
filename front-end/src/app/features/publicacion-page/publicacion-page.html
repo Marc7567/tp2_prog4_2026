@@ -1,5 +1,11 @@
 <main class="publication-page">
-    <a routerLink="/home" class="back-link">Volver a publicaciones</a>
+    <button
+        type="button"
+        class="back-link"
+        (click)="router.navigate(['/home'])"
+    >
+        Volver a publicaciones
+    </button>
 
     @if (cargando()) {
         <p role="status">Cargando publicacion...</p>

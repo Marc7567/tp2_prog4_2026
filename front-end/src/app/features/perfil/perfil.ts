@@ -86,4 +86,9 @@ export class Perfil implements OnInit {
     editarPerfil(): void {
         this.router.navigate(['/editar-perfil']);
     }
+
+    // Navegamos al detalle de la publicacion seleccionada.
+    abrirPublicacion(publicacionId: string): void {
+        this.router.navigate(['/publicacion', publicacionId]);
+    }
 }
