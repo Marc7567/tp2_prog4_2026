@@ -6,12 +6,12 @@ import { Publicacion } from '../../core/models/publicacion.interface.js';
 import { AuthService } from '../../core/services/auth.service.js';
 import { PerfilService } from '../../core/services/perfil.service.js';
 import { PublicacionesService } from '../../core/services/publicaciones.service.js';
-import { Comentarios } from '../comentarios/comentarios.js';
+// import { Comentarios } from '../comentarios/comentarios.js';
 
 @Component({
     selector: 'app-perfil',
     standalone: true,
-    imports: [DatePipe, Comentarios],
+    imports: [DatePipe],
     templateUrl: './perfil.html',
     styleUrl: './perfil.css',
 })

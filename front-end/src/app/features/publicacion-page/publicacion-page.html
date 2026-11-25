@@ -6,6 +6,51 @@
     } @else if (error()) {
         <p class="page-error" role="alert">{{ error() }}</p>
     } @else if (publicacion(); as item) {
-        <app-publicacion-detail [publicacion]="item" />
+        <app-publicacion-detail
+            [publicacion]="item"
+            [accionEnCurso]="accionEnCurso()"
+            (meGusta)="alternarMeGusta()"
+            (eliminar)="solicitarEliminar($event)"
+        />
     }
 </main>
+
+<!-- Modal -->
+@if (publicacionPendienteEliminar(); as publicacion) {
+    <div class="modal-overlay">
+        <section
+            class="confirm-modal"
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="titulo-modal-eliminar"
+            aria-describedby="texto-modal-eliminar"
+        >
+            <h2 id="titulo-modal-eliminar">Eliminar</h2>
+
+            <p id="texto-modal-eliminar">
+                Estas seguro de que queres eliminar esta publicacion
+                <strong>"{{ publicacion.titulo }}"</strong>?
+            </p>
+
+            <div class="modal-actions">
+                <button
+                type="button"
+                class="cancel-button"
+                (click)="cancelarEliminar()"
+                [disabled]="eliminando()"
+                >
+                Cancelar
+                </button>
+
+                <button
+                type="button"
+                class="confirm-delete-button"
+                (click)="confirmarEliminar()"
+                [disabled]="eliminando()"
+                >
+                {{ eliminando() ? 'Eliminando...' : 'Eliminar' }}
+                </button>
+            </div>
+        </section>
+    </div>
+}
