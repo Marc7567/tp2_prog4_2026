@@ -2,7 +2,7 @@ import { Component, EventEmitter, Input, Output, inject } from '@angular/core';
 import { AuthService } from '../../core/services/auth.service.js';
 import { Publicacion } from '../../core/models/publicacion.interface.js';
 import { Usuario } from '../../core/models/usuario.interface.js';
-import { RouterLink } from '@angular/router';
+import { Router } from '@angular/router';
 import { Comentarios } from '../comentarios/comentarios.js';
 import { NombreCompletoPipe } from '../../shared/pipes/nombre-completo.pipe.js';
 import { InicialesPipe } from '../../shared/pipes/iniciales.pipe.js';
@@ -13,8 +13,7 @@ import { ConfirmarAccionDirective } from '../../shared/directives/confirmar-acci
     selector: 'app-publicacion-detail',
     standalone: true,
     imports: [ 
-        Comentarios, 
-        RouterLink,
+        Comentarios,
         NombreCompletoPipe,
         InicialesPipe,
         TiempoTranscurridoPipe,
@@ -26,6 +25,7 @@ import { ConfirmarAccionDirective } from '../../shared/directives/confirmar-acci
 
 export class PublicacionDetail {
     private authService = inject(AuthService);
+    private router = inject(Router);
 
     @Input({ required: true }) publicacion!: Publicacion;
     @Input() accionEnCurso = false;
@@ -48,5 +48,9 @@ export class PublicacionDetail {
 
     inicialAutor(): string {
         return this.publicacion.autor?.nombre?.charAt(0) || '?';
+    }
+
+    abrirPublicacion(): void {
+        void this.router.navigate(['/publicacion', this.publicacion._id]);
     }
 }

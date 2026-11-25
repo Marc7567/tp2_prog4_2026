@@ -1,4 +1,4 @@
-<article class="publication-card">    
+<article class="publication-card" (click)="abrirPublicacion()">   
     <div class="publication-author">
         @if (publicacion.autor?.imagenPerfil) {
             <img
@@ -25,11 +25,7 @@
     </div>
 
     <!-- ruta para ir a la pagina de la publicacion -->
-    <h3>
-        <a [routerLink]="['/publicacion', publicacion._id]">
-            {{ publicacion.titulo }}
-        </a>
-    </h3>
+    <h3>{{ publicacion.titulo }}</h3>
 
     <p class="publication-message">{{ publicacion.mensaje }}</p>
 
@@ -38,7 +34,11 @@
     }
 
     <div class="publication-actions">
-        <button type="button" (click)="meGusta.emit(publicacion)" [disabled]="accionEnCurso">
+        <button
+            type="button"
+            (click)="$event.stopPropagation(); meGusta.emit(publicacion)"
+            [disabled]="accionEnCurso"
+        >
             {{ publicacion.meGustaUsuario ? 'Quitar me gusta' : 'Me gusta' }}
             ({{ publicacion.cantidadMeGusta }})
         </button>
@@ -48,6 +48,7 @@
                 type="button"
                 class="delete-button"
                 appConfirmAction
+                (click)="$event.stopPropagation()"
                 (appConfirmAction)="eliminar.emit(publicacion)"
                 [disabled]="accionEnCurso"
             >
@@ -57,6 +58,9 @@
     </div>
     
     @if (mostrarComentarios) {
-        <app-comentarios [publicacionId]="publicacion._id" />
+        <app-comentarios
+            [publicacionId]="publicacion._id"
+            (click)="$event.stopPropagation()"
+        />
     }
 </article>

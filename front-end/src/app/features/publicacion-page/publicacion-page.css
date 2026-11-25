@@ -13,3 +13,75 @@
 .page-error {
     color: #b42318;
 }
+
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgb(0 0 0 / 55%);
+}
+
+.confirm-modal {
+    width: 100%;
+    max-width: 440px;
+    padding: 28px;
+    border-radius: 14px;
+    background: #fff;
+    color: #222;
+    box-shadow: 0 12px 40px rgb(0 0 0 / 25%);
+}
+
+.confirm-modal h2 {
+    margin: 0 0 16px;
+    font-size: 1.4rem;
+}
+
+.confirm-modal p {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 24px;
+}
+
+.modal-actions button {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.cancel-button {
+    background: #eee;
+    color: #333;
+}
+
+.confirm-delete-button {
+    background: #c62828;
+    color: #fff;
+}
+
+.modal-actions button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.cancel-button:not(:disabled):hover {
+    background: #ddd;
+}
+
+.confirm-delete-button:not(:disabled):hover {
+    background: #a51f1f;
+}

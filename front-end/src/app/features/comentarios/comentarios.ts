@@ -122,9 +122,14 @@ export class Comentarios implements OnInit {
 
         this.comentariosService.crear(this.publicacionId, mensaje).subscribe({
             next: (comentario) => {
-                this.comentarios = [comentario, ...this.comentarios];
+                this.comentarios = [
+                    comentario,
+                    ...this.comentarios
+                ].slice(0, this.limite);
+
                 this.total++;
-                this.offset++;
+                this.offset = this.comentarios.length;
+
                 this.nuevoComentario = '';
                 this.enviando = false;
                 this.mensaje = 'Comentario publicado correctamente.';
