@@ -88,7 +88,13 @@
             <p>Todavia no creaste ninguna publicacion.</p>
         } @else {
             @for (publicacion of misPublicaciones(); track publicacion._id) {
-                <article class="my-publication-details">
+                <article
+                    class="my-publication-details"
+                    (click)="abrirPublicacion(publicacion._id)"
+                    (keydown.enter)="abrirPublicacion(publicacion._id)"
+                    tabindex="0"
+                    role="link"
+                >
                     <div class="my-publication-header">
                         <time>{{ publicacion.createdAt | date: 'dd/MM/yyyy HH:mm' }}</time>
                         <span>Cantidad de me gusta: {{ publicacion.cantidadMeGusta }}</span>
