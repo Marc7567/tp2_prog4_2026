@@ -35,7 +35,7 @@ export class Home implements OnInit {
   publicacionPendienteEliminar = signal<Publicacion | null>(null);
   eliminando = signal(false);
 
-  readonly maxTitulo = 20;
+  readonly maxTitulo = 40;
   readonly maxTexto = 300;
 
   ngOnInit(): void {
@@ -118,18 +118,23 @@ export class Home implements OnInit {
     const titulo = this.titulo.trim();
     const texto = this.texto.trim();
 
-    if (!titulo || !texto) {
-      this.error.set('Completa el titulo y el mensaje');
+    if (titulo.length < 3) {
+      this.error.set('El titulo debe tener al menos 3 caracteres.');
+      return;
+    }
+
+    if (texto.length < 3) {
+      this.error.set('La descripcion debe tener al menos 3 caracteres.');
       return;
     }
 
     if (titulo.length > this.maxTitulo) {
-      this.error.set('El titulo es muy largo (max: 20 caracteres)');
+      this.error.set('El titulo debe tener menos de 40 caracteres');
       return;
     }
 
     if (texto.length > this.maxTexto) {
-      this.error.set('La descripcion es muy larga (max: 300 caracteres)');
+      this.error.set('La descripcion debe tener menos de 300 caracteres');
       return;
     }
 

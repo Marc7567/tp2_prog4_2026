@@ -14,14 +14,20 @@
         type="text" 
         name="titulo" 
         [(ngModel)]="titulo" 
-        maxlength="20" 
+        maxlength="40" 
         placeholder="Escribi un titulo"
         required 
       />
 
+      @if (titulo.trim().length > 0 && titulo.trim().length < 3) {
+        <p class="field-warning" role="status">
+          El titulo debe tener al menos 3 caracteres.
+        </p>
+      }
+
       @if (titulo.length >= maxTitulo) {
         <p class="field-warning" role="status">
-          El titulo no puede superar los 20 caracteres.
+          El titulo alcanzo el limite de 40 caracteres.
         </p>
       }
 
@@ -36,13 +42,19 @@
         required
       ></textarea>
 
+      @if (texto.trim().length > 0 && texto.trim().length < 3) {
+        <p class="field-warning" role="status">
+          La descripcion debe tener al menos 3 caracteres.
+        </p>
+      }
+
       <p class="character-count" [class.limit-reached]="texto.length >= maxTexto">
         {{ texto.length }} / {{ maxTexto }} caracteres
       </p>
 
       @if (texto.length >= maxTexto) {
         <p class="field-warning" role="status">
-          La descripcion solo pude contener 300 caracteres.
+          La descripcion alcanzo el limite de 300 caracteres.
         </p>
       }
 
